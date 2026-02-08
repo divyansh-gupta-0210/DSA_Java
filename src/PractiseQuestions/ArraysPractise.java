@@ -39,7 +39,6 @@ public class ArraysPractise {
 //        pascalsTriangleRC(5, 3); //Given R and C print the number present there
 //        pascalsTriangleAnyRow(3); //Print any row
 //        printPascalsTriangle(5);
-
     }
 
     public static void printPascalsTriangle(int n){
