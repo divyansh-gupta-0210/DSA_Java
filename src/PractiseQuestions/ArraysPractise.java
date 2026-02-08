@@ -4,9 +4,14 @@ import java.util.*;
 
 public class ArraysPractise {
     public static void main(String[] args) {
-        int[] arr = new int[]{2,2,3,3,2,2,1};
-        int[] arr1 = new int[]{1,1,2,3,4,5};
-        int[] arr2 = new int[]{2,3,4,4,5, 6};
+
+//        int[][] arr = new int[][]{{1,1,1,1},{1,0,0,1},{1,1,0,1},{1,1,1,1}};
+//        int[] arr1 = new int[]{1,1,2,3,4,5};
+//        int[] arr2 = new int[]{2,3,4,4,5, 6};
+//        int[][] arr = new int[][]{{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}};
+
+        int[] arr = new int[]{3,1,2,4};
+
 //        print(findLargest(arr));
 //        print(secondLargest(arr));
 //        removeDuplicates(arr);
@@ -20,7 +25,482 @@ public class ArraysPractise {
 //        longestSubarraySum(arr, 3);
 //        twoSum(arr, 14);
 //        sort012(arr);
-        majorityElement(arr);
+//        majorityElement(arr);
+//        maxSubarray(arr);
+//        rearrangeTheArrayWithSigns(arr);
+//        bestTimeToBuyAndSellStock(arr);
+//        nextPermutation(arr);
+//        leadersInAnArray(arr);
+//        longestConsecutiveSequence(arr);
+//        setMatrixZeros(arr, 4,4);
+//        rotateMatrix(arr, 4, 4);
+//        spiralMatrix(arr);
+//        numberOfSubarraysWithSumK(arr, 6);
+//        pascalsTriangleRC(5, 3); //Given R and C print the number present there
+//        pascalsTriangleAnyRow(3); //Print any row
+//        printPascalsTriangle(5);
+
+    }
+
+    public static void printPascalsTriangle(int n){
+
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        for(int i = 1; i <= n; i++){
+            ans.add(generateRow(i));
+        }
+        print(ans);
+//        Brute
+//        for (int row = 0; row < n; row++) {
+//            for (int col = 0; col <= row; col++) {
+//                pascalsTriangleRC(row, col);
+//            }
+//            System.out.println();
+//        }
+    }
+
+    public static ArrayList<Integer> generateRow(int row){
+        int ans = 1;
+        ArrayList<Integer> ansRow = new ArrayList<>();
+        ansRow.add(1);
+        for(int col = 1; col < row; col++){
+            ans = ans * (row - col);
+            ans = ans / (col);
+            ansRow.add(ans);
+        }
+        return ansRow;
+    }
+
+    public static void pascalsTriangleAnyRow(int row){
+
+        int ans = 1;
+        print(ans);
+        for(int i = 1; i < row; i++){
+            ans = ans * (row - i);
+            ans = ans / i;
+            print(ans);
+        }
+
+//        Brute
+//        for (int c = 0; c <= row; c++) {
+//            pascalsTriangleRC(row, c);
+//        }
+    }
+
+    public static void pascalsTriangleRC(int n, int r){
+
+//        Optimal
+        int res = 1;
+        for (int i = 0; i < r; i++) {
+            res = res * (n - i);
+            res = res / (i + 1);
+        }
+        print(res);
+//        Brute -> r-1 C c-1
+    }
+
+    public static void numberOfSubarraysWithSumK(int[] arr, int k){
+//        Optimal
+        HashMap<Integer, Integer> map = new HashMap<>();
+        map.put(0, 1);
+        int preSum = 0;
+        int cnt = 0;
+        for (int j : arr) {
+            preSum = preSum + j;
+            int rem = preSum - k;
+            if(map.containsKey(rem)){
+                cnt += map.get(rem);
+            }
+            map.put(preSum, map.getOrDefault(preSum, 0) + 1);
+        }
+        print(cnt);
+    }
+
+    public static void spiralMatrix(int[][] arr){
+        printMatrix(arr, 4, 4);
+        int n = arr.length;
+        int m = arr[0].length;
+        int left = 0, right = m-1;
+        int top = 0, bottom = n - 1;
+        ArrayList<Integer> ans = new ArrayList<>();
+
+        while(top<=bottom && left<=right){
+            for(int i = left; i <= right; i++){
+                ans.add(arr[top][i]);
+            }
+            top++;
+            for(int i = top; i <= bottom; i++){
+                ans.add(arr[i][right]);
+            }
+            right--;
+
+            if(top<=bottom){
+                for(int i = right; i >= left; i--){
+                    ans.add(arr[bottom][i]);
+                }
+                bottom--;
+            }
+            if(left<=right){
+                for(int i = bottom; i>=top; i--){
+                    ans.add(arr[i][left]);
+                }
+                left++;
+            }
+        }
+        print(ans);
+    }
+
+    public static void rotateMatrix(int[][] arr, int m, int n){
+
+        printMatrix(arr, m, n);
+
+//        Optimal
+        for(int i = 0; i < n-1; i++){
+            for(int j = i+1; j<n; j++){
+                if(i != j){
+                    int temp = arr[i][j];
+                    arr[i][j] = arr[j][i];
+                    arr[j][i] = temp;
+                }
+            }
+        }
+        for(int i = 0; i < n; i++){
+            reverse(arr[i], 0, arr[0].length-1);
+        }
+        printMatrix(arr, m, n);
+
+//        Brute
+//        printMatrix(arr, m, n);
+//        int[][] temp = new int[m][n];
+//        for(int i = 0; i < n; i++){
+//            for(int j = 0; j<n; j++){
+//                temp[j][n-1-i] = arr[i][j];
+//            }
+//        }
+//        printMatrix(temp, m, n);
+    }
+
+    public static void setMatrixZeros(int[][] arr, int m, int n){
+
+        int[] col = new int[n];
+        int[] row = new int[m];
+
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                if(arr[i][j] == 0){
+                    row[i] = 1;
+                    col[j] = 1;
+                }
+            }
+        }
+
+        for(int i = 0; i < m; i++){
+            for(int j = 0; j < n; j++){
+                if(row[i] == 1|| col[j] == 1){
+                    arr[i][j] = 0;
+                }
+            }
+        }
+
+        printMatrix(arr, m, n);
+
+//      Brute
+//        for(int i = 0; i < m; i++){
+//            for(int j = 0; j < n; j++){
+//                if(arr[i][j] == 0){
+//                    markRow(arr, i, n);
+//                    markCol(arr, j, m);
+//                }
+//            }
+//        }
+//
+//        for(int i = 0; i < m; i++){
+//            for(int j = 0; j < n; j++){
+//                if(arr[i][j] == -1){
+//                    arr[i][j] = 0;
+//                }
+//            }
+//        }
+//
+    }
+
+    public static void printMatrix(int[][] arr, int m, int n){
+        for(int i = 0; i < m; i++) {
+            for (int j = 0; j < n; j++) {
+                print(arr[i][j] + " ");
+            }
+            System.out.println();
+        }
+        System.out.println();
+    }
+
+    public static void markRow(int[][] arr, int i, int n){
+        for(int j = 0; j < n; j++){
+            if(arr[i][j] != 0){
+                arr[i][j] = -1;
+            }
+        }
+    }
+
+    public static void markCol(int[][] arr, int j, int m){
+        for(int i = 0; i < m; i++){
+            if(arr[i][j] != 0){
+                arr[i][j] = -1;
+            }
+        }
+    }
+
+    public static void longestConsecutiveSequence(int[] arr){
+
+//        Optimal
+        HashSet<Integer> set = new HashSet<>();
+        for(int num: arr) {
+            set.add(num);
+        }
+        int longest = 0;
+        for(int num : set){
+            if(!set.contains(num-1)){
+                int current = num;
+                int c = 1;
+                while(set.contains(current+1)){
+                    current++;
+                    c++;
+                }
+                longest = Math.max(longest, c);
+            }
+        }
+        print(longest);
+
+//        Better
+//        Arrays.sort(arr);
+//        int longest = 1, cnt_cur = 0, last_smallest = Integer.MIN_VALUE;
+//        for(int i = 0; i < arr.length; i++){
+//            if(arr[i]-1 == last_smallest){
+//                cnt_cur++;
+//                last_smallest = arr[i];
+//            }
+//            else if(arr[i] != last_smallest){
+//                last_smallest = arr[i];
+//                cnt_cur=1;
+//            }
+//            longest = Math.max(longest, cnt_cur);
+//        }
+//        print(longest);
+
+//        Brute
+//        int longest = 0;
+//        for(int i = 0; i < arr.length; i++){
+//            int current = arr[i];
+//            int c = 1;
+//            while(linearSearch(arr, current + 1)){
+//                current++;
+//                c++;
+//            }
+//            longest = Math.max(c, longest);
+//        }
+//        print(longest);
+    }
+
+    public static boolean linearSearch(int[] arr, int toFind){
+        for(int i : arr){
+            if(i == toFind){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    public static void leadersInAnArray(int[] arr){
+//        Everything in the right should be smaller
+
+//        Optimal
+        ArrayList<Integer> ans = new ArrayList<>();
+        int maxOnRight = Integer.MIN_VALUE;
+        for(int i = arr.length-1; i>=0; i--){
+            if(maxOnRight<arr[i]){
+                maxOnRight = arr[i];
+                ans.add(arr[i]);
+            }
+        }
+        print(ans);
+
+//        Brute
+//        ArrayList<Integer> ans = new ArrayList<>();
+//
+//        for(int i = 0; i < arr.length; i++){
+//            boolean isLeader = true;
+//            for(int j = i+1; j < arr.length; j++){
+//                if(arr[i] < arr[j]){
+//                    isLeader = false;
+//                    break;
+//                }
+//            }
+//            if(isLeader){
+//                ans.add(arr[i]);
+//            }
+//        }
+//        print(ans);
+    }
+
+    public static void nextPermutation(int[] arr){
+
+//        Optimal
+        int index = -1;
+        for(int i = arr.length - 2; i >= 0; i--){
+            if(arr[i] < arr[i+1]){
+                index = i;
+                break;
+            }
+        }
+        if(index==-1){
+            reverse(arr, 0, arr.length-1);
+            printArr(arr);
+        }
+        else{
+            for(int i = arr.length - 1; i >= index; i--){
+                if(arr[i] > arr[index]){
+                    swap(arr, i, index);
+                    break;
+                }
+            }
+            reverse(arr, index+1, arr.length-1);
+            printArr(arr);
+        }
+
+//        Brute
+//        Recursion to generate all permutations ->
+//        Linear Search to search the one given in the question ->
+//        return nextIndex
+    }
+
+    public static void bestTimeToBuyAndSellStock(int[] arr){
+        int mini = arr[0];
+        int profit = 0;
+        for(int i = 1; i < arr.length; i++){
+            int cost = arr[i] - mini;
+            profit = Math.max(profit, cost);
+            mini = Math.min(mini, arr[i]);
+        }
+        print(profit);
+    }
+
+    public static void rearrangeTheArrayWithSigns(int[] arr){
+
+//        Unequal number of positives and negatives
+        ArrayList<Integer> pos = new ArrayList<>();
+        ArrayList<Integer> neg = new ArrayList<>();
+        for (int j : arr) {
+            if (j < 0) {
+                neg.add(j);
+            } else {
+                pos.add(j);
+            }
+        }
+
+        if(pos.size() > neg.size()){
+            for(int i = 0; i < neg.size(); i++){
+                arr[2*i] = pos.get(i);
+                arr[2*i+1] = neg.get(i);
+            }
+            int index = neg.size() * 2;
+            for (int j = neg.size() ; j < pos.size(); j++){
+                arr[index] = pos.get(j);
+                index++;
+            }
+        }
+        else{
+            for(int i = 0; i < pos.size(); i++){
+                arr[2*i] = pos.get(i);
+                arr[2*i+1] = neg.get(i);
+            }
+            int index = pos.size() * 2;
+            for (int j = pos.size() ; j < neg.size(); j++){
+                arr[index] = neg.get(j);
+                index++;
+            }
+        }
+
+        printArr(arr);
+
+//      Optimal
+//        int[] ans = new int[arr.length];
+//        int posIndex = 0;
+//        int negIndex = 1;
+//        for (int j : arr) {
+//            if (j < 0) {
+//                ans[negIndex] = j;
+//                negIndex += 2;
+//            } else {
+//                ans[posIndex] = j;
+//                posIndex += 2;
+//            }
+//        }
+//        printArr(ans);
+
+//        Brute
+//        int[] neg = new int[arr.length/2];
+//        int[] pos = new int[arr.length/2];
+//        int po = 0, ne = 0;
+//        for (int j : arr) {
+//            if (j < 0) {
+//                neg[ne++] = j;
+//            } else {
+//                pos[po++] = j;
+//            }
+//        }
+//
+//        for(int i = 0; i < arr.length/2; i++){
+//            arr[2*i] = pos[i];
+//            arr[2*i+1] = neg[i];
+//        }
+//        printArr(arr);
+    }
+
+    public static void maxSubarray(int[] arr){
+
+//        Optimal (Kadan's Algo) -> To find the maximum sum and the subarray
+        int sum = 0, maxi = Integer.MIN_VALUE, start = 0, ansStart = -1, ansEnd = -1;
+        for(int i = 0; i < arr.length; i++){
+            if(sum == 0){
+                start = i;
+            }
+            sum = sum + arr[i];
+            if(sum>maxi){
+                maxi = sum;
+                ansStart = start;
+                ansEnd = i;
+            }
+            if(sum<0){
+                sum = 0;
+            }
+        }
+//        print(sum);
+        for(int i = ansStart; i <= ansEnd; i++){
+            print(arr[i]);
+        }
+
+//        Better
+//        int maxi = Integer.MIN_VALUE;
+//        for(int i = 0; i < arr.length; i++){
+//            int sum = 0;
+//            for(int j = i; j < arr.length; j++){
+//                sum+=arr[j];
+//                maxi = Math.max(sum, maxi);
+//            }
+//        }
+//        print(maxi);
+
+//        Brute
+//        int maxi = Integer.MIN_VALUE;
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = i; j < arr.length; j++){
+//                int sum = 0;
+//                for(int k = i; k <= j; k++){
+//                    sum+=arr[k];
+//                }
+//                maxi = Math.max(sum, maxi);
+//            }
+//        }
+//        print(maxi);
     }
 
     public static void majorityElement(int[] arr){
@@ -502,9 +982,7 @@ public class ArraysPractise {
 
     public static void reverse(int[] arr, int left, int right){
         while (left < right) {
-            int temp = arr[left];
-            arr[left] = arr[right];
-            arr[right] = temp;
+            swap(arr, left, right);
             left++;
             right--;
         }
