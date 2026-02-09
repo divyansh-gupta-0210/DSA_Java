@@ -9,9 +9,9 @@ public class ArraysPractise {
 //        int[] arr1 = new int[]{1,3,5,7};
 //        int[] arr2 = new int[]{0,2,6,8,9};
 //        int[][] arrM = new int[][]{{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}};
-
-        int[] arr = new int[]{4,3,6,2,1,1};
 //        int[][] arrMergedInterval = new int[][]{{1,3},{2,6},{8,9},{9,11},{8,10},{2,4},{15,18},{16,17}};
+
+        int[] arr = new int[]{5,3,2,4,1};
 
 //        print(findLargest(arr));
 //        print(secondLargest(arr));
@@ -46,11 +46,82 @@ public class ArraysPractise {
 //        countSubarraysWithXORasK(arr, 6);
 //        mergeOverlappingSubIntervals(arrMergedInterval);
 //        mergeTwoSortedArrays(arr1, arr2);
-        missingNumberAndRepeatedNumber(arr);
+//        missingNumberAndRepeatedNumber(arr);
+        countInversions(arr);
+    }
+
+    public static void countInversions(int[] arr){
+
+//        Optimal
+
+
+//        Brute
+//        int fc = 0;
+//        for(int i = 0; i < arr.length; i++){
+//            int c = 0;
+//            for(int j = i+1; j < arr.length; j++){
+//                if(arr[i] > arr[j]){
+//                    c++;
+//                }
+//            }
+//            fc+=c;
+//        }
+//        print(fc);
     }
 
     public static void missingNumberAndRepeatedNumber(int[] arr){
 
+//        Optimal
+//        S-Sn = x - y
+//        S2-S2n
+        int s = 0, s2 = 0, n = arr.length;
+        for(int num : arr){
+            s = s + num;
+            s2 = num*num + s2;
+        }
+        int sn = n*(n+1)/2;
+        int s2n = n*(n+1)*(2*n+1)/6;
+        int val1 = s-sn;
+        int val2 = s2-s2n;
+        val2 = val2/val1;
+        int x = (val1 + val2) / 2;
+        int y = x - val1;
+        print(x + " " + y);
+
+//        Better
+//        int[] hash = new int[arr.length+1];
+//        for(int i : arr){
+//            hash[i]++;
+//        }
+//        for(int i = 1; i < arr.length; i++){
+//            if(hash[i] == 0){
+//                print("Missing " + i);
+//            }
+//            else if(hash[i] == 2){
+//                print("Repeating " + i);
+//            }
+//        }
+
+//       Brute
+//        int missing = -1, repeating = -1;
+//        for(int i = 1; i <= arr.length; i++){
+//            int c = 0;
+//            for (int k : arr) {
+//                if (k == i) {
+//                    c++;
+//                }
+//            }
+//            if(c==2){
+//                repeating = i;
+//            }
+//            else if(c == 0){
+//                missing = i;
+//            }
+//            if(missing != -1 && repeating!= -1){
+//                break;
+//            }
+//        }
+//        print(missing + " " + repeating);
     }
 
     public static void mergeTwoSortedArrays(int[] arr1, int[] arr2){
