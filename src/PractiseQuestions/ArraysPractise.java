@@ -6,11 +6,12 @@ public class ArraysPractise {
     public static void main(String[] args) {
 
 //        int[][] arr = new int[][]{{1,1,1,1},{1,0,0,1},{1,1,0,1},{1,1,1,1}};
-//        int[] arr1 = new int[]{1,1,2,3,4,5};
-//        int[] arr2 = new int[]{2,3,4,4,5, 6};
-//        int[][] arr = new int[][]{{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}};
+//        int[] arr1 = new int[]{1,3,5,7};
+//        int[] arr2 = new int[]{0,2,6,8,9};
+//        int[][] arrM = new int[][]{{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}};
 
-        int[] arr = new int[]{3,1,2,4};
+        int[] arr = new int[]{4,3,6,2,1,1};
+//        int[][] arrMergedInterval = new int[][]{{1,3},{2,6},{8,9},{9,11},{8,10},{2,4},{15,18},{16,17}};
 
 //        print(findLargest(arr));
 //        print(secondLargest(arr));
@@ -32,13 +33,398 @@ public class ArraysPractise {
 //        nextPermutation(arr);
 //        leadersInAnArray(arr);
 //        longestConsecutiveSequence(arr);
-//        setMatrixZeros(arr, 4,4);
-//        rotateMatrix(arr, 4, 4);
-//        spiralMatrix(arr);
+//        setMatrixZeros(arrM, 4,4);
+//        rotateMatrix(arrM, 4, 4);
+//        spiralMatrix(arrM);
 //        numberOfSubarraysWithSumK(arr, 6);
 //        pascalsTriangleRC(5, 3); //Given R and C print the number present there
 //        pascalsTriangleAnyRow(3); //Print any row
 //        printPascalsTriangle(5);
+//        MajorityElementII(arr); //Element coming more than n/3 times
+//        threeSum(arr);
+//        fourSum(arr);
+//        countSubarraysWithXORasK(arr, 6);
+//        mergeOverlappingSubIntervals(arrMergedInterval);
+//        mergeTwoSortedArrays(arr1, arr2);
+        missingNumberAndRepeatedNumber(arr);
+    }
+
+    public static void missingNumberAndRepeatedNumber(int[] arr){
+
+    }
+
+    public static void mergeTwoSortedArrays(int[] arr1, int[] arr2){
+
+//        Optimal 1
+        int len = arr1.length + arr2.length;
+        int gap = len/2 + len%2;
+        while(gap>0){
+            int left = 0;
+            int right = left + gap;
+            while(right < len){
+                // One is in arr1 and other is in arr2
+                if(left < arr1.length && right >= arr1.length){
+                    swapIfGreater(arr1, arr2, left, right - arr1.length);
+                }
+                // both are in arr2 and arr2
+                else if(left >= arr1.length){
+                    swapIfGreater(arr2, arr2, left- arr1.length, right- arr1.length);
+                }
+                // both are in arr1 and arr1
+                else{
+                    swapIfGreater(arr1, arr1, left, right);
+                }
+                left++; right++;
+            }
+            if(gap==1) break;
+            gap = (gap/2) + (gap%2);
+        }
+
+//        Optimal 2
+//         int left = arr1.length-1;
+//         int right = 0;
+//         while(left>=0 && right< arr2.length){
+//             if(arr1[left] > arr2[right]){
+//                 int temp = arr1[left];
+//                 arr1[left] = arr2[right];
+//                 arr2[right] = temp;
+//                 left--; right++;
+//             }
+//             else{
+//                 break;
+//             }
+//         }
+//         Arrays.sort(arr1); Arrays.sort(arr2);
+//         printArr(arr1); printArr(arr2);
+
+//        Brute
+//         int[] arr3 = new int[arr1.length + arr2.length];
+//         int left = 0;
+//         int index = 0;
+//         int right = 0;
+//         while(left < arr1.length && right < arr2.length){
+//             if(arr1[left] <= arr2[right]){
+//                 arr3[index] = arr1[left];
+//                 left++; index++;
+//             }
+//             else {
+//                 arr3[index] = arr2[right];
+//                 index++; right++;
+//             }
+//         }
+//         while(left<arr1.length){
+//             arr3[index++] = arr1[left++];
+//         }
+//
+//        while(right<arr2.length){
+//            arr3[index++] = arr2[right++];
+//        }
+//
+//        for(int i = 0; i< arr1.length+arr2.length; i++){
+//            if(i< arr1.length){
+//                arr1[i] = arr3[i];
+//            }
+//            else{
+//                arr2[i- arr1.length] = arr3[i];
+//            }
+//        }
+//        printArr(arr1); printArr(arr2);
+//        printArr(arr3);
+    }
+
+    public static void swapIfGreater(int[] arr1, int[] arr2, int ind1, int ind2){
+        if(arr1[ind1] > arr2[ind2]){
+            int temp = arr1[ind1];
+            arr1[ind1] = arr2[ind2];
+            arr2[ind2] = temp;
+        }
+    }
+
+    public static void mergeOverlappingSubIntervals(int[][] arr){
+
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        Arrays.sort(arr, (a,b) -> Integer.compare(a[0], b[0]));
+        for(int i = 0; i < arr.length; i++){
+            if(ans.isEmpty() || arr[i][0] > ans.get(ans.size()-1).get(1)){
+                ArrayList<Integer> a = new ArrayList<>();
+                a.add(arr[i][0]); a.add(arr[i][1]);
+                ans.add(a);
+            }
+            else{
+                int lastEnd = ans.get(ans.size() - 1).get(1);
+                ans.get(ans.size()-1).set(1, Math.max(lastEnd, arr[i][1]));
+            }
+        }
+        print(ans);
+
+//        Brute
+//        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+//        Arrays.sort(arr, (a,b) -> Integer.compare(a[0], b[0]));
+//        for(int i = 0; i < arr.length; i++){
+//            int start = arr[i][0];
+//            int end = arr[i][1];
+//            print("Already merged : " + ans + ", end is : " + end + "\n");
+//            if(!ans.isEmpty() && end <= (ans.get(ans.size()-1).get(1))){
+//                continue;
+//            }
+//            for(int j = i+1; j < arr.length; j++){
+//                if(arr[j][0] <= end){
+//                    end = Math.max(end, arr[j][1]);
+//                }
+//                else{
+//                    break;
+//                }
+//            }
+//            ArrayList<Integer> a = new ArrayList<>();
+//            a.add(start); a.add(end);
+//            ans.add(a);
+//        }
+//        print(ans);
+    }
+
+    public static void countSubarraysWithXORasK(int[] arr, int s){
+
+//        Optimal
+
+
+//        Better
+//        int c = 0;
+//        for(int i = 0; i < arr.length; i++){
+//            int xor = 0;
+//            for(int j = i; j<arr.length; j++){
+//                xor = xor^arr[j];
+//                if(xor==s){
+//                    c++;
+//                }
+//            }
+//        }
+//        print(c);
+
+//        Brute
+//        int c = 0;
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = i; j<arr.length; j++){
+//                int xor = 0;
+//                for(int k = i; k <= j; k++){
+//                    xor = xor^arr[k];
+//                }
+//                if(xor==s){
+//                    c++;
+//                }
+//            }
+//        }
+//        print(c);
+    }
+
+    public static void fourSum(int[] arr){
+
+//        Optimal
+        Arrays.sort(arr);
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        for(int i = 0; i < arr.length; i++){
+            if(i>0 && arr[i] == arr[i-1]){
+                continue;
+            }
+            for(int j = i+1; j < arr.length; j++){
+                if(j>i+1 && arr[j] == arr[j-1]){
+                    continue;
+                }
+                int k = j+1, l = arr.length-1;
+                while(k < l){
+                    int sum = arr[i] + arr[j] + arr[k] + arr[l];
+                    if(sum > 0){
+                        k--;
+                    }
+                    else if(sum < 0){
+                        j++;
+                    }
+                    else {
+                        ArrayList<Integer> a = new ArrayList<>();
+                        a.add(arr[i]); a.add(arr[j]); a.add(arr[k]); a.add(arr[l]);
+                        ans.add(a);
+                        l--;
+                        k++;
+                        while(k<l && arr[l] == arr[l+1]) l--;
+                        while(k<l && arr[k] == arr[k-1]) k++;
+                    }
+                }
+            }
+        }
+        print(ans);
+
+//        Better
+//        HashSet<ArrayList<Integer>> ans = new HashSet<>();
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = i + 1; j < arr.length; j++){
+//                HashSet<Integer> hashSet = new HashSet<>();
+//                for(int k = j+1; k<arr.length; k++){
+//                    int fourth = -(arr[i]+arr[j]+arr[k]);
+//                    if(hashSet.contains(fourth)){
+//                        ArrayList<Integer> a = new ArrayList<>();
+//                        a.add(arr[i]); a.add(arr[j]); a.add(arr[k]); a.add(fourth);
+//                        ans.add(a);
+//                    }
+//                    hashSet.add(arr[k]);
+//                }
+//            }
+//        }
+//
+//        print(ans);
+
+//      Brute
+//        HashSet<ArrayList<Integer>> ans = new HashSet<>();
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = i+1; j < arr.length; j++){
+//                for(int k = j+1; k < arr.length; k++){
+//                    for(int l = k+1; l < arr.length; l++){
+//                        if(arr[i] + arr[j] + arr[k] + arr[l] == 0) {
+//                            ArrayList<Integer> a = new ArrayList<>();
+//                            a.add(arr[i]); a.add(arr[j]); a.add(arr[k]); a.add(arr[l]);
+//                            ans.add(a);
+//                        }
+//                    }
+//                }
+//            }
+//        }
+//        print(ans);
+    }
+
+    public static void threeSum(int[] arr){
+
+//        Optimal
+        Arrays.sort(arr);
+        ArrayList<ArrayList<Integer>> ans = new ArrayList<>();
+        for(int i = 0; i < arr.length; i++){
+            if(i>0 && arr[i] == arr[i-1]){
+                continue;
+            }
+            int j = i+1;
+            int k = arr.length-1;
+            while(j<k){
+                int sum = arr[i] + arr[j] + arr[k];
+                if(sum < 0){
+                    j++;
+                }
+                else if(sum > 0){
+                    k--;
+                }
+                else{
+                    ArrayList<Integer> a = new ArrayList<>();
+                    a.add(arr[i]); a.add(arr[j]); a.add(arr[k]);
+                    ans.add(a);
+                    j++; k--;
+                    while(j < k && arr[j] == arr[j-1]) j++;
+                    while(j < k && arr[k] == arr[k+1]) k--;
+                }
+            }
+        }
+        print(ans);
+
+//        Better
+//        HashSet<ArrayList<Integer>> ans = new HashSet<>();
+//        for(int i = 0; i < arr.length; i++){
+//            HashSet<Integer> hashSet = new HashSet<>();
+//            for(int j = i + 1; j < arr.length; j++){
+//                int third = -(arr[i]+arr[j]);
+//                if(hashSet.contains(third)){
+//                    ArrayList<Integer> a = new ArrayList<>();
+//                    a.add(arr[i]); a.add(arr[j]); a.add(third);
+//                    ans.add(a);
+//                }
+//                hashSet.add(arr[j]);
+//            }
+//        }
+//
+//        print(ans);
+
+//        Brute
+//        HashSet<ArrayList<Integer>> ans = new HashSet<>();
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = i+1; j < arr.length; j++){
+//                for(int k = j+1; k < arr.length; k++){
+//                    if(arr[i] + arr[j] + arr[k] == 0){
+//                        ArrayList<Integer> a = new ArrayList<>();
+//                        a.add(arr[i]); a.add(arr[j]); a.add(arr[k]);
+//                        ans.add(a);
+//                    }
+//                }
+//            }
+//        }
+//        print(ans);
+    }
+
+    public static void MajorityElementII(int[] arr){
+
+//        Optimal
+        int c1 = 0, c2 = 0, el1 = 0, el2 = 0;
+        for(int i : arr){
+            if(c1 == 0 && el2 != i){
+                c1=1;
+                el1 = i;
+            }
+            else if(c2==0 && el1 != i){
+                c2=1;
+                el2 = i;
+            }
+            else if(el1 == i){
+                c1++;
+            }
+            else if(el2 == i){
+                c2++;
+            }
+            else{
+                c1--;
+                c2--;
+            }
+        }
+        ArrayList<Integer> ans = new ArrayList<>();
+        c1 = 0; c2 = 0;
+        for (int j : arr) {
+            if (el1 == j) {
+                c1++;
+            }
+            if (el2 == j) {
+                c2++;
+            }
+        }
+        int mini = (arr.length/3)+1;
+        if(c1>=mini){ ans.add(el1); }
+        if(c2>=mini){ ans.add(el2); }
+
+        print(el1 + " " + el2);
+
+//        Better
+//        ArrayList<Integer> ans = new ArrayList<>();
+//        HashMap<Integer, Integer> map = new HashMap<>();
+//        for(int i : arr){
+//            map.put(i, map.getOrDefault(i, 0) + 1);
+//            if(map.containsKey(i)){
+//                if(map.get(i) > arr.length/3){
+//                    ans.add(i);
+//                }
+//            }
+//        }
+//        print(ans);
+
+//        Brute
+//        ArrayList<Integer> ans = new ArrayList<>();
+//        for (int k : arr) {
+//            if (ans.isEmpty() || ans.get(0) != k) {
+//                int c = 0;
+//                for (int i : arr) {
+//                    if (i == k) {
+//                        c++;
+//                    }
+//                }
+//                if (c > arr.length / 3) {
+//                    ans.add(k);
+//                }
+//            }
+//            if (ans.size() == 2) {
+//                break;
+//            }
+//        }
+//        print(ans);
     }
 
     public static void printPascalsTriangle(int n){
