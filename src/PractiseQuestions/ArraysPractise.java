@@ -11,7 +11,7 @@ public class ArraysPractise {
 //        int[][] arrM = new int[][]{{1,2,3,4},{5,6,7,8},{9,10,11,12},{13,14,15,16}};
 //        int[][] arrMergedInterval = new int[][]{{1,3},{2,6},{8,9},{9,11},{8,10},{2,4},{15,18},{16,17}};
 
-        int[] arr = new int[]{5,3,2,4,1};
+        int[] arr = new int[]{2,3,-2,4};
 
 //        print(findLargest(arr));
 //        print(secondLargest(arr));
@@ -47,12 +47,108 @@ public class ArraysPractise {
 //        mergeOverlappingSubIntervals(arrMergedInterval);
 //        mergeTwoSortedArrays(arr1, arr2);
 //        missingNumberAndRepeatedNumber(arr);
-        countInversions(arr);
+//        countInversions(arr);
+//        reversePairs(arr);
+        maximumProductSubarray(arr);
+    }
+
+    public static void maximumProductSubarray(int[] arr){
+
+//        Optimal (1)
+        int pre = 1, suf = 1;
+        int p = Integer.MIN_VALUE;
+        for(int i = 0; i < arr.length; i++){
+            if(pre == 0){
+                pre = 1;
+            }
+            if(suf == 0){
+                suf = 1;
+            }
+            pre = pre * arr[i];
+            suf = suf * arr[arr.length - i - 1];
+            p = Math.max(p, Math.max(pre, suf));
+        }
+        print(p);
+
+//        Brute
+//        int maxi = 0;
+//        for(int i = 0; i < arr.length; i++){
+//            int p = 1;
+//            for(int j = i; j < arr.length; j++){
+//                p = p * arr[j];
+//                maxi = Math.max(p, maxi);
+//            }
+//        }
+//        print(maxi);
+    }
+
+    public static void reversePairs(int[] arr){
+
+//        Optimal
+        print(mergeSortRP(arr, 0, arr.length-1));
+
+//        Brute
+//        int c = 0;
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = i+1; j <arr.length; j++){
+//                if(arr[i] > 2* arr[j]){
+//                    c++;
+//                }
+//            }
+//        }
+//        print(c);
+    }
+
+    public static int mergeSortRP(int[] arr, int low, int high){
+        int cnt = 0;
+        if(low>=high){
+            return cnt;
+        }
+        int mid = low + (high - low) / 2;
+        cnt+=mergeSortRP(arr, low, mid);
+        cnt+=mergeSortRP(arr, mid+1, high);
+        cnt+=countPairs(arr, low, mid, high);
+        mergeRP(arr, low, mid, high);
+        return cnt;
+    }
+
+    public static int countPairs(int[] arr, int low, int mid, int high){
+        int right = mid+1, cnt = 0;
+        for(int i = low; i <= mid; i++){
+            while(right <= high && arr[i] > 2 * arr[right]){
+                right++;
+            }
+            cnt += (right-(mid+1));
+        }
+        return cnt;
+    }
+
+    public static void mergeRP(int[] arr, int low, int mid, int high){
+        int left = low, right = mid+1;
+        ArrayList<Integer> temp = new ArrayList<>();
+        while(left <= mid && right <= high){
+            if(arr[left] < arr[right]){
+                temp.add(arr[left]); left++;
+            }
+            else{
+                temp.add(arr[right]); right++;
+            }
+        }
+        while(left<=mid){
+            temp.add(arr[left]); left++;
+        }
+        while(right<=high){
+            temp.add(arr[right]); right++;
+        }
+        for(int i = low; i <= high; i++){
+            arr[i] = temp.get(i-low);
+        }
     }
 
     public static void countInversions(int[] arr){
 
 //        Optimal
+        print(mergeSortCI(arr, 0, arr.length-1));
 
 
 //        Brute
@@ -67,6 +163,45 @@ public class ArraysPractise {
 //            fc+=c;
 //        }
 //        print(fc);
+    }
+
+    public static int mergeSortCI(int[] arr, int low, int high){
+        int cnt = 0;
+        if(low == high){
+            return cnt;
+        }
+        int mid = low + (high - low) / 2;
+
+        cnt += mergeSortCI(arr, low, mid);
+        cnt += mergeSortCI(arr, mid+1, high);
+        cnt += mergeCI(arr, low, mid, high);
+        return cnt;
+    }
+
+    public static int mergeCI(int[] arr, int low, int mid, int high){
+        int left = low, right = mid+1, c = 0;
+        ArrayList<Integer> ans = new ArrayList<>();
+        while(left <= mid && right <= high){
+            if(arr[left] < arr[right]){
+                ans.add(arr[left]);
+                left++;
+            }
+            else{
+                c += (mid - left + 1);
+                ans.add(arr[right]);
+                right++;
+            }
+        }
+        while(left<=mid){
+            ans.add(arr[left]); left++;
+        }
+        while(right <= high){
+            ans.add(arr[right]); right++;
+        }
+        for(int i = low; i <= high; i++){
+            arr[i] = ans.get(i - low);
+        }
+        return c;
     }
 
     public static void missingNumberAndRepeatedNumber(int[] arr){

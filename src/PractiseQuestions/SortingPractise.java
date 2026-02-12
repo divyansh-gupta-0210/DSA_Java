@@ -4,12 +4,58 @@ import java.util.ArrayList;
 
 public class SortingPractise {
     public static void main(String[] args) {
-        int[] arr = new int[]{4,6,2,5,7,9,1,3};
+        int[] arr = new int[]{13,46,24,52,20,9};
 //        mergeSort(arr, 0, arr.length-1);
-        quickSort(arr, 0, arr.length - 1);
+//        quickSort(arr, 0, arr.length - 1);
+//        selectionSort(arr);
+//        bubbleSort(arr);
+        insertionSort(arr);
 
         for (int x : arr) {
             System.out.print(x + " ");
+        }
+    }
+
+    public static void insertionSort(int[] arr){
+        for(int i = 0; i <= arr.length-1; i++){
+            int j = i;
+            while(j > 0 && arr[j-1] > arr[j]){
+                int temp = arr[j-1];
+                arr[j-1] = arr[j];
+                arr[j] = temp;
+                j--;
+            }
+        }
+    }
+
+    public static void bubbleSort(int[] arr){
+        for(int i = arr.length - 1; i >= 1; i--){
+            int didSwap = 0;
+            for(int j = 0; j < i; j++){
+                if(arr[j] > arr[j+1]){
+                    int temp = arr[j+1];
+                    arr[j+1] = arr[j];
+                    arr[j] = temp;
+                    didSwap = 1;
+                }
+            }
+            if(didSwap == 0){
+                break;
+            }
+        }
+    }
+
+    public static void selectionSort(int[] arr){
+        for(int i = 0; i <= arr.length-2; i++){
+            int mini = i;
+            for(int j = i; j <= arr.length-1; j++){
+                if(arr[j] < arr[mini]){
+                    mini = j;
+                }
+            }
+            int temp = arr[mini];
+            arr[mini] = arr[i];
+            arr[i] = temp;
         }
     }
 
