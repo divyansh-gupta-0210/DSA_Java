@@ -439,10 +439,10 @@ public class ArraysPractise {
                 while(k < l){
                     int sum = arr[i] + arr[j] + arr[k] + arr[l];
                     if(sum > 0){
-                        k--;
+                        l--;
                     }
                     else if(sum < 0){
-                        j++;
+                        k++;
                     }
                     else {
                         ArrayList<Integer> a = new ArrayList<>();
