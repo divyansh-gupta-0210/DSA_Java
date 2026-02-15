@@ -50,9 +50,9 @@ public class TreesPractise {
         root.left.right = new Node(5);
         root.right.left = new Node(6);
         root.right.right = new Node(7);
-//        root.left.left.left = new Node(8);
-//        root.left.right.right = new Node(9);
-//        root.right.right.right = new Node(10);
+        root.left.left.left = new Node(8);
+        root.left.right.right = new Node(9);
+        root.right.right.right = new Node(10);
 
 //        Node root1 = new Node(1);
 //        root1.left = new Node(2);
@@ -84,8 +84,176 @@ public class TreesPractise {
 //        topView(root);
 //        bottomView(root);
 //        rightSideView(root, 0, ans); // Reverse PreOrder (Root -> Right -> Left)
-        leftSideVide(root, 0, ans);
+//        leftSideVide(root, 0, ans);
+//        isSymmetricTree(root);
+//        rootToNodePath(root, 9, ans);
+//        lowestCommonAncestor(root, 6, 10);
+//        widthOfABinaryTree(root);
+
+        childrenSumProperty(root);
+//                   33
+//                /       \
+//              17         16
+//             /  \       /   \
+//            8    9     6     10
+//           /      \             \
+//          8        9            10
+
+        preorderRecursive(root);
         print(ans);
+    }
+
+    public static void childrenSumProperty(Node root){
+        // node - left + right -> increase the value by +1 any times
+        if(root == null){
+            return;
+        }
+        int child = 0;
+        if(root.left != null){
+            child+=root.left.val;
+        }
+        if(root.right != null){
+            child+=root.right.val;
+        }
+        if(child >= root.val){
+            root.val = child;
+        }
+        else{
+            if(root.left != null){
+                root.left.val = root.val;
+            }
+            else if(root.right != null){
+                root.right.val = root.val;
+            }
+        }
+        childrenSumProperty(root.left);
+        childrenSumProperty(root.right);
+        int tot = 0;
+        if(root.left != null) tot+= root.left.val;
+        if(root.right != null) tot += root.right.val;
+        if(root.left != null || root.right != null) root.val = tot;
+    }
+
+    public static void widthOfABinaryTree(Node root){
+        int ans = 0;
+        if(root == null){
+            print(ans);
+        }
+        Queue<Pair> queue = new LinkedList<>();
+        queue.offer(new Pair(root, 0));
+        while(!queue.isEmpty()){
+            int size = queue.size();
+            int min = queue.peek().ht;
+            int first = 0, last = 0;
+            for(int i = 0; i < size; i++){
+                // we subtract min in order to get the same id for the nodes to start from 0
+                int cur_id = queue.peek().ht - min;
+                Node node = queue.peek().node;
+                queue.poll();
+                if(i == 0){
+                    first = cur_id;
+                }
+                if(i == size-1){
+                    last = cur_id;
+                }
+
+                if(node.left != null){
+                    queue.offer(new Pair(node.left, cur_id * 2 + 1));
+                }
+                if(node.right != null){
+                    queue.offer(new Pair(node.right, cur_id * 2 + 2));
+                }
+            }
+            ans = Math.max(ans, last - first + 1);
+        }
+        print(ans);
+    }
+
+    public static void lowestCommonAncestor(Node node, int n1, int n2){
+
+        // Optimal
+        Node ans = lowestCommonAncestorOptimal(node, n1, n2);
+        print(ans.val);
+
+        // Brute
+//        ArrayList<Integer> p1 = new ArrayList<>();
+//        ArrayList<Integer> p2 = new ArrayList<>();
+//        rootToNodePathBrute(node, n1, p1);
+//        rootToNodePathBrute(node, n2, p2);
+//        int ans = 0;
+//        for(int i = 0; i < Math.min(p1.size(), p2.size()); i++){
+//            if(p1.get(i) == p2.get(i)){
+//                ans = p1.get(i);
+//            }
+//            else{
+//                break;
+//            }
+//        }
+//        print(ans);
+    }
+
+    public static Node lowestCommonAncestorOptimal(Node node, int n1, int n2){
+        if(node == null){
+            return null;
+        }
+        if(node.val == n1 || node.val == n2){
+            return node;
+        }
+        Node left = lowestCommonAncestorOptimal(node.left, n1, n2);
+        Node right= lowestCommonAncestorOptimal(node.right, n1, n2);
+        if(left == null){
+            return right;
+        }
+        else if(right == null){
+            return left;
+        }
+        else{
+            return node;
+        }
+    }
+
+    public static boolean rootToNodePathBrute(Node node, int val, ArrayList<Integer> path){
+        if(node == null){
+            return false;
+        }
+        path.add(node.val);
+        if(node.val == val){
+            return true;
+        }
+        if(rootToNodePathBrute(node.left, val, path) || rootToNodePathBrute(node.right, val, path)){
+            return true;
+        }
+        path.remove(path.size()-1);
+        return false;
+    }
+
+    public static boolean rootToNodePath(Node node, int val, ArrayList<Integer> ans){
+        if(node == null){
+            return false;
+        }
+        ans.add(node.val);
+        if(node.val == val){
+            return true;
+        }
+        if(rootToNodePath(node.left, val, ans) || rootToNodePath(node.right, val, ans)){
+            return true;
+        }
+        ans.remove(ans.size()-1);
+        return false;
+    }
+
+    public static void isSymmetricTree(Node node){
+        print(checkSymmetric(node.left, node.right));
+    }
+
+    public static boolean checkSymmetric(Node node1, Node node2){
+        if(node1 == null || node2 == null){
+            return node1 == node2;
+        }
+        if(node1.val != node2.val){
+            return false;
+        }
+        return checkSymmetric(node1.left, node2.right) && checkSymmetric(node1.right, node2.left);
     }
 
     public static void leftSideVide(Node node, int level, ArrayList<Integer> ans){

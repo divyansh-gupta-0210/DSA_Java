@@ -1,13 +1,96 @@
 package PractiseQuestions;
 
+import java.util.*;
+
 import static PractiseQuestions.ArraysPractise.*;
 
 public class RandomQuestionsPractise {
 
+    static int operations = 0;
+    static List<List<Integer>> graph;
+
     public static void main(String[] args) {
         int[] arr = {-11,-21,2,3,-1,-2};
 //        moveNegativesAtEnd(arr);
-        maxSubArrary(arr);
+//        maxSubArrary(arr);
+        ArrayList<Integer> initial = new ArrayList<>();
+        ArrayList<Integer> expected = new ArrayList<>();
+        ArrayList<Integer> treeFrom = new ArrayList<>();
+        ArrayList<Integer> treeTo = new ArrayList<>();
+
+        initial.add(1);initial.add(1);initial.add(0);initial.add(1);
+        expected.add(0);expected.add(1);expected.add(1);expected.add(0);
+        treeFrom.add(0);treeFrom.add(0);treeFrom.add(1);
+        treeTo.add(1);treeTo.add(2);treeTo.add(3);
+
+        print(getMinimumOperations(4, treeFrom, treeTo, initial, expected));
+    }
+
+    public static int getMinimumOperations(int treeNodes,
+                                           List<Integer> treeFrom,
+                                           List<Integer> treeTo,
+                                           List<Integer> initial,
+                                           List<Integer> expected) {
+
+        // Build adjacency list
+        graph = new ArrayList<>();
+        for (int i = 0; i < treeNodes; i++) {
+            graph.add(new ArrayList<>());
+        }
+
+        for (int i = 0; i < treeFrom.size(); i++) {
+            int u = treeFrom.get(i);
+            int v = treeTo.get(i);
+
+            graph.get(u).add(v);
+            graph.get(v).add(u);
+        }
+
+        operations = 0;
+
+        // Start DFS from root (0)
+        dfs(0, -1, 0, 0, initial, expected);
+
+        return operations;
+    }
+    private static void dfs(int node,
+                            int parent,
+                            int evenFlip,
+                            int oddFlip,
+                            List<Integer> initial,
+                            List<Integer> expected) {
+
+        int current = initial.get(node);
+
+        // Apply flips caused by ancestors
+        if (node % 2 == 0) {
+            if (evenFlip % 2 == 1) {
+                current ^= 1;
+            }
+        } else {
+            if (oddFlip % 2 == 1) {
+                current ^= 1;
+            }
+        }
+
+        int newEvenFlip = evenFlip;
+        int newOddFlip = oddFlip;
+
+        if (current != expected.get(node)) {
+            operations++;
+
+            if (node % 2 == 0) {
+                newEvenFlip++;
+            } else {
+                newOddFlip++;
+            }
+        }
+
+        for (int child : graph.get(node)) {
+            if (child != parent) {
+                dfs(child, node, newEvenFlip, newOddFlip, initial, expected);
+            }
+        }
     }
 
     public static void maxSubArrary(int[] arr){
