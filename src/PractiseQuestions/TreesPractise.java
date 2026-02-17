@@ -54,6 +54,9 @@ public class TreesPractise {
         root.left.right.right = new Node(9);
         root.right.right.right = new Node(10);
 
+        int[] maxi = new int[1];
+        ArrayList<Integer> ans = new ArrayList<>();
+
 //        Node root1 = new Node(1);
 //        root1.left = new Node(2);
 //        root1.right = new Node(3);
@@ -62,9 +65,6 @@ public class TreesPractise {
 //        root1.right.left = new Node(6);
 //        root1.right.right = new Node(7);
 //        root1.left.left.left = new Node(8);
-
-        int[] maxi = new int[1];
-        ArrayList<Integer> ans = new ArrayList<>();
 //        preorderRecursive(root); // Preorder (Root -> Left -> Right)
 //        postorderRecursive(root); // PostOrder (Left -> Right -> Root)
 //        inOrderRecursive(root); //Inorder (Left -> Root -> Right)
@@ -89,8 +89,6 @@ public class TreesPractise {
 //        rootToNodePath(root, 9, ans);
 //        lowestCommonAncestor(root, 6, 10);
 //        widthOfABinaryTree(root);
-
-        childrenSumProperty(root);
 //                   33
 //                /       \
 //              17         16
@@ -98,9 +96,386 @@ public class TreesPractise {
 //            8    9     6     10
 //           /      \             \
 //          8        9            10
+//        childrenSumProperty(root);
+//        nodesAtADistanceK(root, 2, ans, 5);
+//        print(timeTakenToBurnABTFromANode(root, 9));
+//        print(countNumberOfNodesInACompleteBT(root));
 
-        preorderRecursive(root);
+//        ArrayList<Integer> inorder = new ArrayList<>();
+//        inorder.add(9);inorder.add(3);inorder.add(15);inorder.add(20);inorder.add(7);
+//        ArrayList<Integer> preorder = new ArrayList<>();
+//        preorder.add(3);preorder.add(9);preorder.add(20);preorder.add(15);preorder.add(7);
+//        buildATreeFromPreAndInorder(inorder, preorder);
+
+//        ArrayList<Integer> inorder = new ArrayList<>();
+//        inorder.add(9);inorder.add(3);inorder.add(15);inorder.add(20);inorder.add(7);
+//        ArrayList<Integer> postOrder = new ArrayList<>();
+//        postOrder.add(3);postOrder.add(9);postOrder.add(20);postOrder.add(15);postOrder.add(7);
+//        buildATreeFromPostAndInorder(inorder, postOrder);
+
+//        String s = serialize(root);
+//        print(s);
+//        Node deserialized = deserialize(s);
+//        levelOrderTraversal(deserialized);
+//        morisTraversalInorder(root, ans);
+//        morisTraversalPreorder(root, ans);
+        printLinkedList(flattenBinaryTreeRecursive(root));
+        flattenBinaryTreeIterative(root);
         print(ans);
+    }
+
+    public static void printLinkedList(Node node){
+        while(node!=null){
+            print(node.val);
+            node = node.right;
+        }
+        print("\n");
+    }
+
+    public static void flattenBinaryTreeIterative(Node root){
+        Stack<Node> st = new Stack<>();
+        st.push(root);
+        while(!st.isEmpty()){
+            Node cur = st.peek();
+            st.pop();
+            if(cur.right != null){
+                st.add(cur.right);
+            }
+            if(cur.left!= null){
+                st.add(cur.left);
+            }
+            if(!st.isEmpty()){
+                cur.right = st.peek();
+            }
+            cur.left = null;
+        }
+        printLinkedList(root);
+    }
+
+    public static Node flattenBinaryTreeRecursive(Node root){
+        if(root == null){
+            return null;
+        }
+        Node right = flattenBinaryTreeRecursive(root.right);
+        Node left = flattenBinaryTreeRecursive(root.left);
+        root.right = right;
+        root.left = null;
+        Node temp = root;
+        while(temp.right != null){
+            temp = temp.right;
+        }
+        temp.right = left;
+        return root;
+    }
+
+    public static void morisTraversalPreorder(Node node, ArrayList<Integer> ans){
+        Node cur = node;
+        while(cur!= null){
+            if(cur.left == null){
+                ans.add(cur.val);
+                cur = cur.right;
+            }
+            else{
+                Node prev = cur.left;
+                while(prev.right != null && prev.right != cur){
+                    prev = prev.right;
+                }
+                if(prev.right == null){
+                    prev.right = cur;
+                    ans.add(cur.val);
+                    cur = cur.left;
+                }
+                else{
+                    prev.right = null;
+                    cur = cur.right;
+                }
+            }
+        }
+    }
+
+    public static void morisTraversalInorder(Node node, ArrayList<Integer> ans){
+        Node cur = node;
+        while(cur!= null){
+            if(cur.left == null){
+                ans.add(cur.val);
+                cur = cur.right;
+            }
+            else{
+                Node prev = cur.left;
+                while(prev.right != null && prev.right != cur){
+                    prev = prev.right;
+                }
+                if(prev.right == null){
+                    prev.right = cur;
+                    cur = cur.left;
+                }
+                else{
+                    prev.right = null;
+                    ans.add(cur.val);
+                    cur = cur.right;
+                }
+            }
+        }
+    }
+
+    public static Node deserialize(String s){
+        if(s.isEmpty()){
+            return null;
+        }
+        String[] values = s.split(" ");
+        Queue<Node> queue = new LinkedList<>();
+        Node ans = new Node(Integer.parseInt(values[0]));
+        queue.add(ans);
+        for(int i = 1; i < values.length; i++){
+            Node parent = queue.poll();
+            if(!values[i].equals("n")){
+                Node left = new Node(Integer.parseInt(values[i]));
+                parent.left = left;
+                queue.add(left);
+            }
+            if(!values[++i].equals("n")){
+                Node right = new Node(Integer.parseInt(values[i]));
+                parent.right = right;
+                queue.add(right);
+            }
+        }
+        return ans;
+    }
+
+    public static String serialize(Node root){
+        StringBuilder ans = new StringBuilder();
+        if(root == null) {
+            return "";
+        }
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(root);
+        while(!queue.isEmpty()){
+            Node cur = queue.poll();
+            if(cur == null){
+                ans.append("n ");
+                continue;
+            }
+            ans.append(cur.val).append(" ");
+            queue.add(cur.left);
+            queue.add(cur.right);
+        }
+
+        return ans.toString();
+    }
+
+    public static void buildATreeFromPostAndInorder(ArrayList<Integer> inorder, ArrayList<Integer> postOrder){
+        HashMap<Integer, Integer> inMap = new HashMap<>();
+        for(int i = 0; i < inorder.size(); i++){
+            inMap.put(inorder.get(i), i);
+        }
+        Node root = buildATreePostIn(postOrder, 0, postOrder.size()-1, inorder, 0, inorder.size()-1, inMap);
+        inOrderRecursive(root);
+    }
+
+    public static Node buildATreePostIn(
+            ArrayList<Integer> post, int postStart, int postEnd, ArrayList<Integer> in,
+            int inStart, int inEnd, HashMap<Integer, Integer> inMap){
+        if(postStart > postEnd || inStart > inEnd){
+            return null;
+        }
+        Node root = new Node(post.get(postEnd));
+        int inRoot = inMap.get(post.get(postEnd));
+        int numsLeft = inRoot - inStart;
+        root.left =
+                buildATreePostIn(post, postStart, postStart + numsLeft - 1, in, inStart, inRoot - 1, inMap);
+        root.right =
+                buildATreePostIn(post, postStart+numsLeft, postEnd - 1, in, inRoot + 1, inEnd, inMap);
+        return root;
+    }
+
+    public static void buildATreeFromPreAndInorder(ArrayList<Integer> inorder, ArrayList<Integer> preorder){
+        HashMap<Integer, Integer> inMap = new HashMap<>();
+        for(int i = 0; i < inorder.size(); i++){
+            inMap.put(inorder.get(i), i);
+        }
+        Node root = buildATreePreIn(preorder, 0, preorder.size()-1, inorder, 0, inorder.size(), inMap);
+        inOrderRecursive(root);
+    }
+
+    public static Node buildATreePreIn(
+            ArrayList<Integer> pre, int preStart, int preEnd, ArrayList<Integer> in,
+            int inStart, int inEnd, HashMap<Integer, Integer> inMap){
+        if(preStart > preEnd || inStart > inEnd){
+            return null;
+        }
+        Node root = new Node(pre.get(preStart));
+        int inRoot = inMap.get(root.val);
+        int numsLeft = inRoot - inStart;
+        root.left =
+                buildATreePreIn(pre, preStart + 1, preStart + numsLeft, in, inStart, inRoot-1, inMap);
+        root.right =
+                buildATreePreIn(pre, preStart + numsLeft + 1, preEnd, in, inRoot + 1, inEnd, inMap);
+        return root;
+    }
+
+    public static int countNumberOfNodesInACompleteBT(Node root){
+        if(root == null){
+            return 0;
+        }
+        int lh = countLeftHeight(root);
+        int rh = countRightHeight(root);
+        if(lh == rh){
+            return ((2<<lh) - 1);
+        }
+        return 1 + countNumberOfNodesInACompleteBT(root.left) + countNumberOfNodesInACompleteBT(root.right);
+    }
+
+    public static int countRightHeight(Node node){
+        int c = 0;
+        while(node.right!= null){
+            c++;
+            node = node.right;
+        }
+        return c;
+    }
+
+    public static int countLeftHeight(Node node){
+        int c = 0;
+        while(node.left!=null){
+            node = node.left;
+            c++;
+        }
+        return c;
+    }
+
+    public static int timeTakenToBurnABTFromANode(Node node, int target){
+        if(node == null){
+            return 0;
+        }
+        int time = -1;
+        HashMap<Node, Node> map_parents = new HashMap<>();
+        mark_parents_Burn(map_parents, node);
+        Node toBurnFrom = findNodeToBurnFrom(node, target);
+
+        Queue<Node> queue = new LinkedList<>();
+        HashSet<Node> visited = new HashSet<>();
+        queue.offer(toBurnFrom);
+        visited.add(toBurnFrom);
+        while (!queue.isEmpty()){
+            int size = queue.size();
+            time++;
+            for(int i = 0; i < size; i++){
+                Node cur = queue.poll();
+                if(cur.left!=null && !visited.contains(cur.left)){
+                    queue.offer(cur.left);
+                    visited.add(cur.left);
+                }
+                if(cur.right!=null && !visited.contains(cur.right)){
+                    queue.offer(cur.right);
+                    visited.add(cur.right);
+                }
+                Node parent = map_parents.get(cur);
+                if(parent != null && !visited.contains(parent)){
+                    queue.offer(parent);
+                    visited.add(parent);
+                }
+            }
+        }
+        return time;
+    }
+
+    public static Node findNodeToBurnFrom(Node node, int target){
+        if(node == null || node.val == target){
+            return node;
+        }
+        Node left = findNodeToBurnFrom(node.left, target);
+        if(left!=null){
+            return left;
+        }
+        return findNodeToBurnFrom(node.right, target);
+    }
+
+    public static void mark_parents_Burn(HashMap<Node, Node> map_parents, Node node){
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(node);
+        while(!queue.isEmpty()){
+            Node current = queue.poll();
+            if(current.left != null){
+                map_parents.put(current.left, current);
+                queue.offer(current.left);
+            }
+            if(current.right != null){
+                map_parents.put(current.right, current);
+                queue.offer(current.right);
+            }
+        }
+    }
+
+    public static void nodesAtADistanceK(Node node, int k, ArrayList<Integer> ans, int target) {
+        HashMap<Node, Node> parent_map = new HashMap<>();
+        mark_parents(node, parent_map);
+
+        Map<Node, Boolean> visited = new HashMap<>();
+        Node targetNode = findNode(node, target);
+
+        if (targetNode == null) return;
+
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(targetNode);
+        visited.put(targetNode, true);
+
+        int cur_level = 0;
+
+        while (!queue.isEmpty()) {
+            int size = queue.size();
+            if (cur_level == k) break;
+            cur_level++;
+
+            for (int i = 0; i < size; i++) {
+                Node current = queue.poll();
+
+                if (current.left != null && visited.get(current.left) == null) {
+                    queue.offer(current.left);
+                    visited.put(current.left, true);
+                }
+
+                if (current.right != null && visited.get(current.right) == null) {
+                    queue.offer(current.right);
+                    visited.put(current.right, true);
+                }
+
+                if (parent_map.get(current) != null && visited.get(parent_map.get(current)) == null) {
+                    queue.offer(parent_map.get(current));
+                    visited.put(parent_map.get(current), true);
+                }
+            }
+        }
+
+        while (!queue.isEmpty()) {
+            ans.add(queue.poll().val);
+        }
+    }
+
+    public static Node findNode(Node root, int k){
+        if(root == null || root.val == k) {
+            return root;
+        }
+        Node left = findNode(root.left, k);
+        if(left != null){
+            return left;
+        }
+        return findNode(root.right, k);
+    }
+
+    public static void mark_parents(Node node, HashMap<Node, Node> parent_map){
+        Queue<Node> queue = new LinkedList<>();
+        queue.offer(node);
+        while(!queue.isEmpty()){
+            Node current = queue.poll();
+            if(current.left != null){
+                parent_map.put(current.left, current);
+                queue.offer(current.left);
+            }
+            if(current.right != null){
+                parent_map.put(current.right, current);
+                queue.offer(current.right);
+            }
+        }
     }
 
     public static void childrenSumProperty(Node root){
