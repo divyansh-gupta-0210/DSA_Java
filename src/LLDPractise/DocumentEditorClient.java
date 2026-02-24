@@ -135,7 +135,7 @@ public class DocumentEditorClient {
 //        private String renderedDocument;
 //
 //        public DocumentEditor() {
-//            documentElements = new ArrayList<>();
+//            documentElements = new ArrayList< >();
 //            renderedDocument = "";
 //        }
 //
