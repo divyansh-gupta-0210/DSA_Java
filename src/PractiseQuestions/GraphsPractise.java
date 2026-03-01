@@ -253,7 +253,7 @@ public class GraphsPractise {
         }
         for(int i = 1; i <= size; i++){
             if(!vis[i]){
-                if(checkCycle(i, cycleUndirectedGraph, vis)){
+                if(checkCycleBFS(i, cycleUndirectedGraph, vis)){
                     return true;
                 }
             }
@@ -261,7 +261,7 @@ public class GraphsPractise {
         return false;
     }
 
-    public static boolean checkCycle(int source, Graph graph, boolean[] vis){
+    public static boolean checkCycleBFS(int source, Graph graph, boolean[] vis){
         vis[source] = true;
         Queue<PairGraph> queue = new LinkedList<>();
         queue.offer(new PairGraph(source, -1));
