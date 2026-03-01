@@ -78,26 +78,48 @@ class GraphWeighted{
     }
 }
 
+class GraphDirected{
+    public HashMap<Integer, ArrayList<Integer>> adjList;
+    public GraphDirected(){
+        adjList = new HashMap<>();
+    }
+
+    public void addEdge(int source, int destination){
+        adjList.putIfAbsent(source, new ArrayList<>());
+        adjList.putIfAbsent(destination, new ArrayList<>());
+        adjList.get(source).add(destination);
+    }
+    public void displayGraph(){
+        for(int vertex : adjList.keySet()){
+            System.out.print(vertex + " -> ");
+            for(int neighbour : adjList.get(vertex)){
+                System.out.print(neighbour + " ");
+            }
+            System.out.println();
+        }
+    }
+}
+
 public class GraphsPractise {
     public static void main(String[] args) {
-        Graph graph = new Graph();
-        graph.addEdge(1,2);
-        graph.addEdge(1,3);
-        graph.addEdge(2,5);
-        graph.addEdge(2,6);
+//        Graph graph = new Graph();
+//        graph.addEdge(1,2);
+//        graph.addEdge(1,3);
+//        graph.addEdge(2,5);
+//        graph.addEdge(2,6);
 //        graph.addEdge(3,4);
 //        graph.addEdge(3,7);
 //        graph.addEdge(8,4);
 //        graph.addEdge(8,7);
 
-        Graph cycleUndirectedGraph = new Graph();
-        cycleUndirectedGraph.addEdge(1, 2);
-        cycleUndirectedGraph.addEdge(1, 3);
-        cycleUndirectedGraph.addEdge(3, 4);
-        cycleUndirectedGraph.addEdge(3, 6);
-        cycleUndirectedGraph.addEdge(2, 5);
-        cycleUndirectedGraph.addEdge(5, 7);
-        cycleUndirectedGraph.addEdge(6, 7);
+//        Graph cycleUndirectedGraph = new Graph();
+//        cycleUndirectedGraph.addEdge(1, 2);
+//        cycleUndirectedGraph.addEdge(1, 3);
+//        cycleUndirectedGraph.addEdge(3, 4);
+//        cycleUndirectedGraph.addEdge(3, 6);
+//        cycleUndirectedGraph.addEdge(2, 5);
+//        cycleUndirectedGraph.addEdge(5, 7);
+//        cycleUndirectedGraph.addEdge(6, 7);
 
 //        graph.addEdge(1, 2);
 //        graph.addEdge(1, 6);
@@ -122,8 +144,78 @@ public class GraphsPractise {
 //        dfsGraphTraversal(graph);
 //        print(bfsDetectCycleInUndirectedGraph(cycleUndirectedGraph, cycleUndirectedGraph.adjList.size()));
 //        print(bfsDetectCycleInUndirectedGraph(graph, graph.adjList.size()));
-        print(dfsDetectCycleInUndirectedGraph(graph, graph.adjList.size()));
-        print(dfsDetectCycleInUndirectedGraph(cycleUndirectedGraph, cycleUndirectedGraph.adjList.size()));
+//        print(dfsDetectCycleInUndirectedGraph(graph, graph.adjList.size()));
+//        print(dfsDetectCycleInUndirectedGraph(cycleUndirectedGraph, cycleUndirectedGraph.adjList.size()));
+
+        GraphDirected graphDirected = new GraphDirected();
+        graphDirected.addEdge(1,2);
+        graphDirected.addEdge(2,3);
+        graphDirected.addEdge(3,4);
+        graphDirected.addEdge(3,7);
+        graphDirected.addEdge(4,5);
+        graphDirected.addEdge(7,5);
+        graphDirected.addEdge(5,6);
+        graphDirected.addEdge(8,2);
+        graphDirected.addEdge(8,9);
+        graphDirected.addEdge(9,10);
+        graphDirected.addEdge(10,8);
+
+        graphDirected.displayGraph();
+        print(dfsDetectCycleInDirectedGraph(graphDirected, graphDirected.adjList.size()));
+        topologicalSort(graphDirected, graphDirected.adjList.size());
+    }
+
+    public static void topologicalSort(GraphDirected graphDirected, int size){
+        int[] visited = new int[size+1];
+        Stack<Integer> stack = new Stack<>();
+        for(int i = 1; i <= size; i++){
+            if(visited[i]==0){
+                dfsTopological(i, visited, stack, graphDirected);
+            }
+        }
+        while(!stack.isEmpty()){
+            print(stack.pop() + " ");
+        }
+    }
+
+    public static void dfsTopological(int node, int[] visited, Stack<Integer> st, GraphDirected graphDirected){
+        visited[node] = 1;
+        for(Integer it : graphDirected.adjList.get(node)){
+            if(visited[it] == 0){
+                dfsTopological(it, visited, st, graphDirected);
+            }
+        }
+        st.add(node);
+    }
+
+    public static boolean dfsDetectCycleInDirectedGraph(GraphDirected graphDirected, int size){
+        int[] visited = new int[size+1];
+        int[] pathVisited = new int[size+1];
+        for (int i = 1; i <= size; i++){
+            if(visited[i] == 0){
+                if(dfsCheckDirectedGraph(i, graphDirected, visited, pathVisited)){
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    public static boolean dfsCheckDirectedGraph(int node, GraphDirected graphDirected, int[] visited, int[] pathVisited){
+        visited[node] = 1;
+        pathVisited[node] = 1;
+        for(Integer it : graphDirected.adjList.get(node)){
+            if(visited[it] == 0){
+                if(dfsCheckDirectedGraph(it, graphDirected, visited, pathVisited)){
+                    return true;
+                }
+            }
+            else if(pathVisited[it] == 1){
+                return true;
+            }
+        }
+        pathVisited[node] = 0;
+        return false;
     }
 
     public static boolean dfsDetectCycleInUndirectedGraph(Graph graph, int size){
