@@ -10,20 +10,51 @@ public class RandomQuestionsPractise {
     static List<List<Integer>> graph;
 
     public static void main(String[] args) {
-        int[] arr = {-11,-21,2,3,-1,-2};
+//        int[] arr = {-11,-21,2,3,-1,-2};
 //        moveNegativesAtEnd(arr);
 //        maxSubArrary(arr);
-        ArrayList<Integer> initial = new ArrayList<>();
-        ArrayList<Integer> expected = new ArrayList<>();
-        ArrayList<Integer> treeFrom = new ArrayList<>();
-        ArrayList<Integer> treeTo = new ArrayList<>();
+//        ArrayList<Integer> initial = new ArrayList<>();
+//        ArrayList<Integer> expected = new ArrayList<>();
+//        ArrayList<Integer> treeFrom = new ArrayList<>();
+//        ArrayList<Integer> treeTo = new ArrayList<>();
+//
+//        initial.add(1);initial.add(1);initial.add(0);initial.add(1);
+//        expected.add(0);expected.add(1);expected.add(1);expected.add(0);
+//        treeFrom.add(0);treeFrom.add(0);treeFrom.add(1);
+//        treeTo.add(1);treeTo.add(2);treeTo.add(3);
+//
+//        print(getMinimumOperations(4, treeFrom, treeTo, initial, expected));
 
-        initial.add(1);initial.add(1);initial.add(0);initial.add(1);
-        expected.add(0);expected.add(1);expected.add(1);expected.add(0);
-        treeFrom.add(0);treeFrom.add(0);treeFrom.add(1);
-        treeTo.add(1);treeTo.add(2);treeTo.add(3);
+        ArrayList<Integer> arr = new ArrayList<>();
+        arr.add(2); arr.add(4);arr.add(8);arr.add(2);
+        print(evenproduct(arr));
+    }
 
-        print(getMinimumOperations(4, treeFrom, treeTo, initial, expected));
+    public static int evenproduct(List<Integer> nums) {
+        long mod = 1000000007L;
+        int n = nums.size();
+
+        long oddCount = 0;
+
+        // count odd numbers
+        for (int num : nums) {
+            if (num % 2 != 0) {
+                oddCount++;
+            }
+        }
+
+        long totalTriplets = combination(n);
+        long oddTriplets = combination(oddCount);
+
+        long result = (totalTriplets - oddTriplets) % mod;
+        if (result < 0) result += mod;
+
+        return (int) result;
+    }
+
+    private static long combination(long x) {
+        if (x < 3) return 0;
+        return (x * (x - 1) * (x - 2)) / 6;
     }
 
     public static int getMinimumOperations(int treeNodes,
