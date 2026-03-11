@@ -43,20 +43,19 @@ public class TreesPractise {
 //     8       9    10
 
     public static void main(String[] args) {
-        Node root = new Node(1);
+        Node root = new Node(3);
         root.left = new Node(2);
-        root.right = new Node(3);
-        root.left.left = new Node(4);
-        root.left.right = new Node(5);
-        root.right.left = new Node(6);
-        root.right.right = new Node(7);
-        root.left.left.left = new Node(8);
-        root.left.right.right = new Node(9);
-        root.right.right.right = new Node(10);
+        root.right = new Node(4);
+        root.left.left = new Node(1);
+//        root.left.right = new Node(5);
+//        root.right.left = new Node(6);
+//        root.right.right = new Node(7);
+//        root.left.left.left = new Node(8);
+//        root.left.right.right = new Node(9);
+//        root.right.right.right = new Node(10);
 
         int[] maxi = new int[1];
         ArrayList<Integer> ans = new ArrayList<>();
-
 //        Node root1 = new Node(1);
 //        root1.left = new Node(2);
 //        root1.right = new Node(3);
@@ -119,9 +118,44 @@ public class TreesPractise {
 //        levelOrderTraversal(deserialized);
 //        morisTraversalInorder(root, ans);
 //        morisTraversalPreorder(root, ans);
-        printLinkedList(flattenBinaryTreeRecursive(root));
-        flattenBinaryTreeIterative(root);
-        print(ans);
+//        printLinkedList(flattenBinaryTreeRecursive(root));
+//        flattenBinaryTreeIterative(root);
+//        print(ans);
+
+        print(longestConsecutive(root, maxi));
+    }
+
+    public static int longestConsecutive(Node root, int[] ans){
+        dfsLC(root, ans);
+        return ans[0];
+    }
+
+    public static int[] dfsLC(Node node, int[] ans){
+        if(node == null){
+            return new int[]{0,0};
+        }
+        int inc = 1;
+        int dec = 1;
+        if(node.left != null){
+            int[] left = dfsLC(node.left, ans);
+            if(node.val == node.left.val + 1){
+                dec = Math.max(dec, left[1] + 1);
+            }
+            if(node.val == node.left.val - 1){
+                inc = Math.max(inc, left[0] + 1);
+            }
+        }
+        if(node.right != null){
+            int[] right = dfsLC(node.right, ans);
+            if(node.val == node.right.val + 1){
+                dec = Math.max(dec, right[1] + 1);
+            }
+            if(node.val == node.right.val - 1){
+                inc = Math.max(inc, right[0] + 1);
+            }
+        }
+        ans[0] = Math.max(ans[0], inc + dec - 1);
+        return new int[]{inc, dec};
     }
 
     public static void printLinkedList(Node node){

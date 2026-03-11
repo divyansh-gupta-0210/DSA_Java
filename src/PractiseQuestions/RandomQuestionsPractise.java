@@ -25,9 +25,43 @@ public class RandomQuestionsPractise {
 //
 //        print(getMinimumOperations(4, treeFrom, treeTo, initial, expected));
 
+//        ArrayList<Integer> arr = new ArrayList<>();
+//        arr.add(2); arr.add(4);arr.add(8);arr.add(2);
+//        print(evenproduct(arr));
+
+//        int m = 5, n = 3;
+//        System.out.println("Total squares in " + m + "x" + n + ": " + countSquares(m, n));
         ArrayList<Integer> arr = new ArrayList<>();
-        arr.add(2); arr.add(4);arr.add(8);arr.add(2);
-        print(evenproduct(arr));
+        arr.add(2);arr.add(-3);
+        arr.add(4);arr.add(6);arr.add(1);
+        print(gainMaxValue(arr, 2));
+    }
+
+    public static int gainMaxValue(List<Integer> game_val, int k) {
+        int n = game_val.size();
+        long[] dp = new long[n];
+        long max = Long.MIN_VALUE;
+        for (int i = n - 1; i >= 0; i--) {
+            dp[i] = game_val.get(i);
+            if (i + k < n) {
+                dp[i] += dp[i + k];
+            }
+            max = Math.max(max, dp[i]);
+        }
+        return (int) max;
+    }
+
+    public static long countSquares(int m, int n) {
+        long totalSquares = 0;
+
+        // Squares can only be as large as the shorter side
+        int minSide = Math.min(m, n);
+
+        for (int k = 1; k <= minSide; k++) {
+            totalSquares += (long) (m - k + 1) * (n - k + 1);
+        }
+
+        return totalSquares;
     }
 
     public static int evenproduct(List<Integer> nums) {
