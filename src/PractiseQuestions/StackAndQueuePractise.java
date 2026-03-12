@@ -1,7 +1,6 @@
 package PractiseQuestions;
 
-import java.util.ArrayList;
-import java.util.Stack;
+import java.util.*;
 
 class PairStack{
     int num;
@@ -12,6 +11,23 @@ class PairStack{
     }
 }
 
+class PairStackStock{
+    int val;
+    int ind;
+    public PairStackStock(int val, int ind){
+        this.val = val;
+        this.ind = ind;
+    }
+}
+
+class NodeDLL{
+    int val; int key;
+    NodeDLL prev; NodeDLL next;
+    public NodeDLL(int key, int val){
+        this.key = key;
+        this.val = val;
+    }
+}
 public class StackAndQueuePractise {
     public static void main(String[] args) {
 
@@ -75,11 +91,207 @@ public class StackAndQueuePractise {
 //        sumOfSubarrayRanges(arr);
 //        int[] arr = new int[]{4,7,1,1,2,-3,-7,17,15,-16,-18,-19};
 //        asteroidCollision(arr);
-        int[] arr = new int[]{2,1,5,6,2,3};
-        largestRectangleInAHistogram(arr);
+//        int[] arr = new int[]{2,1,5,6,2,3};
+//        largestRectangleInAHistogram(arr);
+
+//        int[][] arr = new int[][]{{1,0,1,0,1}, {1,0,1,1,1}, {1,1,1,1,1}, {1,0,0,0,1}};
+//        maximumRectangleInHistogram(arr);
+
+//        String s = "1432219";
+//        removeKDigits(s, 3);
+//        int[] arr = new int[]{7,2,1,3,3,5,8};
+//        stockSpanner(arr);
+
+//        int[] arr = new int[]{1,3,-1,-3,5,3,2,1,6};
+//        slidingWindowMaximum(arr, 3);
+
+//        int[][] arr = new int[][]{{0,1,1,0},{0,0,0,0},{0,1,0,0},{1,1,0,0}};
+//        celebrityProblem(arr);
+
+        LRUCache cache = new LRUCache(2);
+        cache.put(1,1);
+        cache.put(2,2);
+        System.out.println(cache.get(1));   // returns 1
+        cache.put(3,3); // removes key 2
+        System.out.println(cache.get(2));   // returns -1
     }
 
-    public static void largestRectangleInAHistogram(int[] arr){
+    public static void celebrityProblem(int[][] arr){
+
+//        Optimal
+        int top = 0; int down = arr.length - 1;
+        while(top < down){
+            if(arr[top][down] == 1){
+                top = top + 1;
+            }
+            else{
+                down--;
+            }
+        }
+        int candidate = top;
+        for(int i = 0; i < arr.length; i++){
+            if(i != candidate){
+                if(arr[candidate][i] == 1 || arr[i][candidate] == 0){
+                    System.out.println("No Celebrity");
+                    break;
+                }
+            }
+        }
+        System.out.println(top);
+
+//        Brute
+//        int n = arr.length;
+//        int[] knowMe = new int[n];
+//        int[] iKnow = new int[n];
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = 0; j < arr[0].length; j++){
+//                if(arr[i][j] == 1){
+//                    knowMe[j]++;
+//                    iKnow[i]++;
+//                }
+//            }
+//        }
+//        for(int i = 0; i < n-1; i++){
+//            if(knowMe[i] == n-1 && iKnow[i] == 0){
+//                System.out.println(i);
+//            }
+//        }
+    }
+
+    public static void slidingWindowMaximum(int[] arr, int k){
+
+//        Optimal
+        Deque<Integer> deque = new ArrayDeque<>();
+        ArrayList<Integer> ans = new ArrayList<>();
+
+        for(int i = 0; i < arr.length; i++){
+            if(!deque.isEmpty() && deque.peekFirst() <= i-k){
+                deque.pollFirst();
+            }
+            while(!deque.isEmpty() && arr[deque.peekLast()] < arr[i]){
+                deque.pollLast();
+            }
+            deque.addLast(i);
+            if(i>=k-1){
+                ans.add(arr[deque.peekFirst()]);
+            }
+        }
+        System.out.println(ans);
+
+//        Brute
+//        ArrayList<Integer> ans = new ArrayList<>();
+//        for(int i = 0; i <= arr.length - k; i++){
+//            int maxi = arr[i];
+//            for(int j = i; j < i + k; j++){
+//                maxi = Math.max(maxi, arr[j]);
+//            }
+//            ans.add(maxi);
+//        }
+//        System.out.println(ans);
+    }
+
+    public static void stockSpanner(int[] arr){
+
+//        Optimal
+         Stack<PairStackStock> stack = new Stack<>();
+         int[] span = new int[arr.length];
+         for(int i = 0; i < arr.length; i++){
+             while(!stack.isEmpty() && stack.peek().val <= arr[i]){
+                 stack.pop();
+             }
+             if(stack.isEmpty()){
+                 span[i] = i + 1;
+             }
+             else{
+                 span[i] = i - stack.peek().ind;
+             }
+             stack.add(new PairStackStock(arr[i], i));
+         }
+        System.out.println(Arrays.toString(span));
+
+//        Better
+//        int[] pge = findPGE(arr);
+//        int maxCnt = 0;
+//        for(int i = 0; i < arr.length; i++){
+//            maxCnt = Math.max(maxCnt, i - pge[i]);
+//        }
+//        System.out.println(maxCnt);
+
+//        Brute
+//        ArrayList<Integer> ans = new ArrayList<>();
+//        int maxCnt = 0;
+//        for(int i = 0; i < arr.length; i++){
+//            int cnt = 1;
+//            for(int j = i-1; j >= 0; j--){
+//                if(arr[j] <= arr[i]){
+//                    cnt++;
+//                }
+//                else{
+//                    break;
+//                }
+//            }
+//            maxCnt = Math.max(cnt, maxCnt);
+//        }
+//        System.out.println(maxCnt);
+    }
+
+    public static void removeKDigits(String s, int k){
+        char[] ch = s.toCharArray();
+        Stack<Character> stack = new Stack<>();
+        for(int i = 0; i < ch.length; i++){
+            while(!stack.isEmpty() && stack.peek()-'0' > ch[i]-'0' && k > 0){
+                stack.pop();
+                k--;
+            }
+            stack.push(ch[i]);
+        }
+        if(k!=0){
+            while(k>0){
+                stack.pop();
+                k--;
+            }
+        }
+        if(stack.isEmpty()){
+            System.out.println(0);
+        }
+        String res = "";
+        while(!stack.isEmpty()){
+            res += stack.pop();
+        }
+        String ans = new StringBuilder(res).reverse().toString();
+        int i = 0;
+        while(i < ans.length() && ans.charAt(i) == '0'){
+            i++;
+        }
+        ans = ans.substring(i);
+        if(ans.length() == 0){
+            System.out.println(0);
+        } else {
+            System.out.println(ans);
+        }
+    }
+
+    public static void maximumRectangleInHistogram(int[][] arr){
+        int n = arr.length; int m = arr[0].length; int maxArea = 0; int[][] prefixSum = new int[n][m];
+
+        for(int j = 0; j < m; j++){
+            int sum = 0;
+            for(int i = 0; i < n; i++){
+                sum += arr[i][j];
+                if(arr[i][j] == 0){
+                    sum = 0;
+                }
+                prefixSum[i][j] = sum;
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            maxArea = Math.max(maxArea, largestRectangleInAHistogram(prefixSum[i]));
+        }
+        System.out.println(maxArea);
+    }
+
+    public static int largestRectangleInAHistogram(int[] arr){
 
 //        Optimal
         Stack<Integer> stack = new Stack<>();
@@ -101,8 +313,8 @@ public class StackAndQueuePractise {
             int pse = stack.isEmpty() ? -1 : stack.peek();
             maxArea = Math.max(maxArea, arr[ele] * (nse - pse - 1));
         }
-        System.out.println(maxArea);
-
+//        System.out.println(maxArea);
+        return maxArea;
 //        Brute
 //        int[] pse = findPSE(arr);
 //        int[] nse = findNSE(arr);
@@ -451,6 +663,60 @@ public class StackAndQueuePractise {
         System.out.println(stack.isEmpty());
     }
 }
+
+class LRUCache{
+    int capacity;
+    HashMap<Integer, NodeDLL> map;
+
+    NodeDLL head;
+    NodeDLL tail;
+
+    public LRUCache(int capacity){
+        this.capacity = capacity;
+        map = new HashMap<>();
+        head = new NodeDLL(0,0);
+        tail = new NodeDLL(0,0);
+        head.next = tail;
+        tail.prev = head;
+    }
+
+    private void remove(NodeDLL node){
+        node.prev.next = node.next;
+        node.next.prev = node.prev;
+    }
+
+    public void insert(NodeDLL node){
+        node.next = head.next;
+        node.prev = head;
+        head.next.prev = node;
+        head.next = node;
+    }
+
+    public int get(int key){
+        if(!map.containsKey(key)){
+            return -1;
+        }
+        NodeDLL node = map.get(key);
+        remove(node);
+        insert(node);
+        return node.val;
+    }
+
+    public void put(int key, int value){
+        if(map.containsKey(key)){
+            remove(map.get(key));
+        }
+        NodeDLL node = new NodeDLL(key,value);
+        insert(node);
+        map.put(key,node);
+        if(map.size() > capacity){
+            NodeDLL lru = tail.prev;
+            remove(lru);
+            map.remove(lru.key);
+        }
+    }
+}
+
 
 class MinStackImplementationUsingMinVal{
     Stack<Integer> minStack;
