@@ -66,3 +66,30 @@ A thread pool is a managed collection of reusable threads. Instead of creating a
 - schedule(Runnable command, long delay, TimeUnit unit): Schedules a task to run once after a specified delay.
 - scheduleAtFixedRate(Runnable command, long initialDelay, long period, TimeUnit unit): Schedules a task to run repeatedly at a fixed rate after an initial delay. The execution is independent of the task's completion time.
 - scheduleWithFixedDelay(Runnable command, long initialDelay, long delay, TimeUnit unit): Schedules a task to run repeatedly with a fixed delay between the completion of one execution and the start of the next.
+
+
+## Different types of Locks
+
+### Intrinsic Locks (Synchronized Keyword): 
+This is the built-in locking mechanism in Java. When a thread enters a synchronized method or block, it automatically acquires the lock on the object and releases it upon exiting, even if an exception occurs.
+
+### Explicit Locks (Lock Interface):
+These provide more sophisticated features than intrinsic locks. The java.util.concurrent.locks package offers explicit locking with higher flexibility, allowing for non-blocking operations like tryLock().
+
+### Reentrant Lock:
+- A specific implementation of the Lock interface where the thread that holds the lock can re-acquire it without causing deadlocks. 
+- It allows for advanced control over locking, such as timed lock attempts and interruptible lock acquisition.
+
+### Read-Write Lock:
+- This allows multiple threads to read a shared resource simultaneously, provided no thread is writing to it. 
+- However, it ensures exclusive access for writing; if a writer holds the lock, no other readers or writers can access the resource.
+
+### Semaphores: 
+Unlike locks, which enforce exclusive access for a single thread, semaphores control access to a specific number of resources. 
+They maintain a count of permits. Threads must acquire a permit before accessing a resource and release it when finished.
+
+### Binary Semaphore: 
+A semaphore with only one permit, acting similarly to a mutex or a simple lock.
+
+### Counting Semaphore:
+A semaphore allowing a specified number of threads to access a resource concurrently.

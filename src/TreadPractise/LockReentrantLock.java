@@ -36,7 +36,7 @@ public class LockReentrantLock {
                 System.out.println("Final counter value: " + lockReentrantLock.getCounter());
             }
             else{
-                System.out.println("Timeour: Not all tasks finished");
+                System.out.println("Timeout: Not all tasks finished");
             }
         }catch (InterruptedException ex){
               System.err.println("Interrupted while waiting for tasks to finish");
