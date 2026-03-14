@@ -50,7 +50,7 @@ public class WaitNotify {
             Thread.currentThread().interrupt();
         }
 
-        Thread notifyAll = new Thread(() -> waitNotifyAll.doNotifyAll(), "Notifier-All");
+        Thread notifyAll = new Thread(waitNotifyAll::doNotifyAll, "Notifier-All");
         notifyAll.start();
 
         try{
