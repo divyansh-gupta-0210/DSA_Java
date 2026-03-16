@@ -126,9 +126,15 @@ public class GraphsPractise {
         Graph graph = new Graph();
         graph.addEdge(1,2);
         graph.addEdge(2,3);
-        graph.addEdge(4,5);
-        graph.addEdge(5,6);
+        graph.addEdge(2,6);
+        graph.addEdge(6,5);
+        graph.addEdge(5,4);
+        graph.addEdge(3,4);
+        graph.addEdge(4,7);
         graph.addEdge(7,8);
+
+//        isBipartiteBFS(graph.adjList.size(), graph);
+        isBipartiteDFS(graph.adjList.size(), graph);
 
 //        Graph cycleUndirectedGraph = new Graph();
 //        cycleUndirectedGraph.addEdge(1, 2);
@@ -204,14 +210,169 @@ public class GraphsPractise {
 //                {'O', 'O', 'X', 'X', 'X'}};
 //        replaceOWithX(grid);
 
-        int[][] grid = new int[][]{
-                {0,0,0,1,1},
-                {0,0,1,1,0},
-                {0,1,0,0,0},
-                {0,1,1,0,0},
-                {0,0,0,1,1},
-        };
-        numberOfEnclaves(grid);
+//        int[][] grid = new int[][]{
+//                {0,0,0,1,1},
+//                {0,0,1,1,0},
+//                {0,1,0,0,0},
+//                {0,1,1,0,0},
+//                {0,0,0,1,1},
+//        };
+//        numberOfEnclaves(grid);
+//        int[][] grid = new int[][]{
+//                {1,1,0,1,1},
+//                {1,0,0,0,0},
+//                {0,0,0,0,1},
+//                {1,1,0,1,1}
+//        };
+//        numberOfDistinctIslands(grid);
+//        numberOfDistinctIslandsBFS(grid);
+    }
+
+    public static void isBipartiteDFS(int V, Graph graph){
+        int[] color = new int[V+1];
+        for(int i = 1; i <= V; i++){
+            color[i] = -1;
+        }
+        for(int i = 1; i <= V; i++){
+            if(color[i] == -1){
+                if(!checkIsBipartiteDFS(i, 0, color, graph)){
+                    print("No");
+                    break;
+                }
+            }
+        }
+        print("Yes");
+    }
+
+    public static boolean checkIsBipartiteDFS(int node, int col, int[] color, Graph graph){
+        color[node] = col;
+        for(Integer it : graph.adjList.get(node)){
+            if(color[it] == -1){
+                if(!checkIsBipartiteDFS(it, 1 - col, color, graph)){
+                    return false;
+                }
+            }
+            else if(color[it] == col){
+                return false;
+            }
+        }
+        return true;
+    }
+
+    public static void isBipartiteBFS(int V, Graph graph){
+        int[] color = new int[V + 1];
+        for(int i = 0; i < V; i++){
+            color[i] = -1;
+        }
+        ArrayList<ArrayList<Integer>> adj = new ArrayList<>();
+        for(int i = 1; i < V; i++){
+            if(color[i] == -1){
+                if(!checkBipartiteBFS(i, V, adj, color, graph)){
+                    System.out.println("No");
+                    break;
+                }
+            }
+        }
+        print("Yes");
+    }
+
+    public static boolean checkBipartiteBFS(int start, int V, ArrayList<ArrayList<Integer>> adj, int[] color, Graph graph){
+        Queue<Integer> queue = new LinkedList<>();
+        queue.add(start);
+        color[start] = 0;
+        while(!queue.isEmpty()){
+            int node = queue.peek();
+            queue.poll();
+            for(int it : graph.adjList.get(node)){
+                if(color[it] == -1){
+                    color[it] = 1 - color[node];
+                    queue.add(it);
+                }
+                else if(color[it] == color[node]){
+                    return false;
+                }
+            }
+        }
+        return true;
+    }
+
+    public static void numberOfDistinctIslandsBFS(int[][] grid){
+        int n = grid.length; int m = grid[0].length;
+        int[][] vis = new int[n][m];
+        HashSet<ArrayList<String>> set = new HashSet<>();
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(vis[i][j] == 0 && grid[i][j] == 1){
+                    ArrayList<String> pairs = numberOfDistinctIslandsUsingBFS(i, j, vis, grid);
+                    set.add(pairs);
+                }
+            }
+        }
+        print(set.size());
+    }
+
+    public static ArrayList<String> numberOfDistinctIslandsUsingBFS(int row0, int col0, int[][] vis, int[][] grid){
+        int n = grid.length;
+        int m = grid[0].length;
+
+        int[] delRow = {-1,0,1,0};
+        int[] delCol = {0,1,0,-1};
+        Queue<int[]> queue = new LinkedList<>();
+        ArrayList<String> shape = new ArrayList<>();
+        queue.add(new int[]{row0, col0});
+        while(!queue.isEmpty()){
+            int[] cell = queue.poll();
+            int row = cell[0]; int col = cell[1];
+            for(int i = 0; i < 4; i++){
+                int nrow = row + delRow[i];
+                int ncol = row + delCol[i];
+
+                if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && vis[nrow][ncol] == 0 && grid[nrow][ncol] == 1){
+                    vis[nrow][ncol] = 1;
+                    queue.add(new int[]{nrow, ncol});
+                    shape.add((nrow - row0) + " " + (ncol - col0));
+                }
+            }
+        }
+        return shape;
+    }
+
+    public static void numberOfDistinctIslands(int[][] grid){
+        int n = grid.length; int m = grid[0].length;
+        int[][] vis = new int[n][m];
+        HashSet<ArrayList<String>> set = new HashSet<>();
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(vis[i][j] == 0 && grid[i][j] == 1){
+                    ArrayList<String> pairs = new ArrayList<>();
+                    dfsNumberOfDistinctIslands(i, j, vis, grid, pairs, i, j);
+                    set.add(pairs);
+                }
+            }
+        }
+        print(set.size());
+    }
+
+    public static void dfsNumberOfDistinctIslands(int row, int col, int[][] vis, int[][] grid,
+                                                  ArrayList<String> pairs, int row0, int col0){
+
+        vis[row][col] = 1;
+        pairs.add(toString(row-row0, col-col0));
+        int n = grid.length; int m = grid[0].length;
+        int[] delRow = {-1,0,1,0};
+        int[] delCol = {0,-1,0,1};
+
+        for(int i = 0; i < 4; i++){
+            int nrow = row + delRow[i];
+            int ncol = col + delCol[i];
+            if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && vis[nrow][ncol] == 0 && grid[nrow][ncol] == 1){
+                dfsNumberOfDistinctIslands(nrow, ncol, vis, grid, pairs, row0, col0);
+            }
+        }
+    }
+
+    public static String toString(int r, int c){
+        return Integer.toString(r) + " " + Integer.toString(c);
     }
 
     public static void numberOfEnclaves(int[][] grid){
