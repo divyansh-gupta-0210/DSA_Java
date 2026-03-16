@@ -190,8 +190,158 @@ public class GraphsPractise {
 //        int[][] grid = new int[][]{{1,1,1},{2,2,0},{2,2,2}};
 //        floodFillAlgo(grid, 2, 0, 3);
 
-        int[][] basket = new int[][]{{0, 1, 2},{0, 1, 1},{2, 1, 1}};
-        rottenOranges(basket);
+//        int[][] basket = new int[][]{{0, 1, 2},{0, 1, 1},{2, 1, 1}};
+//        rottenOranges(basket);
+
+//        int[][] grid = new int[][]{{0,0,0},{0,1,0},{1,0,1}};
+//        distanceOfNearestCellHaving1(grid);
+
+//        char[][] grid = new char[][]{
+//                {'X', 'X', 'X', 'X', 'X'},
+//                {'X', 'O', 'O', 'X', 'O'},
+//                {'X', 'X', 'O', 'X', 'O'},
+//                {'X', 'O', 'X', 'O', 'X'},
+//                {'O', 'O', 'X', 'X', 'X'}};
+//        replaceOWithX(grid);
+
+        int[][] grid = new int[][]{
+                {0,0,0,1,1},
+                {0,0,1,1,0},
+                {0,1,0,0,0},
+                {0,1,1,0,0},
+                {0,0,0,1,1},
+        };
+        numberOfEnclaves(grid);
+    }
+
+    public static void numberOfEnclaves(int[][] grid){
+        int n = grid.length; int m = grid[0].length;
+        int[][] vis = new int[n][m];
+        int[] delRow = {-1,0,1,0}; int[] delCol = {0,1,0,-1};
+
+        Queue<PairIsland> queue = new LinkedList<>();
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(i == 0 || j == 0 || i == n - 1 || j == m - 1){
+                    if(grid[i][j] == 1){
+                        queue.offer(new PairIsland(i, j));
+                        vis[i][j] = 1;
+                    }
+                }
+            }
+        }
+
+        while(!queue.isEmpty()){
+            int r = queue.peek().row;
+            int c = queue.peek().col;
+            queue.poll();
+            for(int i = 0; i < 4; i++){
+                int nrow = r + delRow[i];
+                int ncol = c + delCol[i];
+                if(nrow >= 0 && ncol >= 0 && nrow < n && ncol < m && vis[nrow][ncol] == 0 && grid[nrow][ncol] == 1){
+                    queue.add(new PairIsland(nrow, ncol));
+                    vis[nrow][ncol] = 1;
+                }
+            }
+        }
+
+        int cnt = 0;
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(grid[i][j] == 1 && vis[i][j] == 0){
+                    cnt++;
+                }
+            }
+        }
+        print(cnt);
+
+    }
+
+    public static void replaceOWithX(char[][] grid){
+        int n = grid.length; int m = grid[0].length;
+        int[][] vis = new int[n][m];
+        int[] delRow = {-1,0,1,0};
+        int[] delcol = {0,1,0,-1};
+
+        for(int j = 0; j < m; j++){
+            if(vis[0][j] == 0 && grid[0][j] == 'O'){
+                dfsReplaceOWithX(0, j, vis, grid, delRow, delcol);
+            }
+            if(vis[n-1][j] == 0 && grid[n-1][j] == 'O'){
+                dfsReplaceOWithX(n-1, j, vis, grid, delRow, delcol);
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            if(vis[i][0] == 0 && grid[i][0] == 'O'){
+                dfsReplaceOWithX(i, 0, vis, grid, delRow, delcol);
+            }
+            if(vis[i][m-1] == 0 && grid[i][m-1] == 'O'){
+                dfsReplaceOWithX(i, m-1, vis, grid, delRow, delcol);
+            }
+        }
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(vis[i][j] == 0 && grid[i][j] == 'O'){
+                    grid[i][j] = 'X';
+                }
+            }
+        }
+        for(int i = 0; i < grid.length; i++){
+            for (int j = 0; j < grid[0].length; j++){
+                print(grid[i][j] + " ");
+            }
+            print("\n");
+        }
+    }
+
+    public static void dfsReplaceOWithX(int row, int col, int[][] vis, char[][] grid, int[] delRow, int[] delCol){
+        vis[row][col] = 1;
+        int n = grid.length; int m = grid[0].length;
+        for(int i = 0; i < 4; i++){
+            int nRow = row + delRow[i];
+            int nCol = col + delCol[i];
+            if(nRow >= 0 && nRow < n && nCol >= 0 && nCol < m && vis[nRow][nCol] == 0 && grid[nRow][nCol] == 'O'){
+                dfsReplaceOWithX(nRow, nCol, vis, grid, delRow, delCol);
+            }
+        }
+    }
+
+    public static void distanceOfNearestCellHaving1(int[][] grid){
+        int[][] vis = new int[grid.length][grid[0].length];
+        int[][] ans = new int[grid.length][grid[0].length];
+
+        Queue<PairRottenOranges> queue = new LinkedList<>();
+        for(int i = 0; i < grid.length; i++){
+            for(int j = 0; j < grid[i].length; j++){
+                if(grid[i][j] == 1){
+                    queue.offer(new PairRottenOranges(i, j, 0));
+                    vis[i][j] = 1;
+                }
+            }
+        }
+        int[] delRow = {-1,0,1,0};
+        int[] delcol = {0,1,0,-1};
+        while(!queue.isEmpty()){
+            int row = queue.peek().row; int col = queue.peek().col; int time = queue.peek().time;
+            queue.poll();
+            ans[row][col] = time;
+            for(int i = 0; i < 4; i++){
+                int nrow = row + delRow[i];
+                int ncol = col + delcol[i];
+                if(nrow >= 0 && nrow < grid.length && ncol >= 0 && ncol < grid[0].length && vis[nrow][ncol] == 0){
+                    vis[nrow][ncol] = 1;
+                    queue.offer(new PairRottenOranges(nrow, ncol, time+1));
+                }
+            }
+        }
+        for(int i = 0; i < ans.length; i++){
+            for (int j = 0; j < ans[0].length; j++){
+                print(ans[i][j] + " ");
+            }
+            print("\n");
+        }
     }
 
     public static void rottenOranges(int[][] basket){
