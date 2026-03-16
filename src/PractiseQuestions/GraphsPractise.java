@@ -11,6 +11,26 @@ class PairGraph{
     }
 }
 
+class PairIsland{
+    int row;
+    int col;
+    public PairIsland(int row, int col){
+        this.row = row;
+        this.col = col;
+    }
+}
+
+class PairRottenOranges{
+    int row;
+    int col;
+    int time;
+    public PairRottenOranges(int row, int col, int time){
+        this.row = row;
+        this.col = col;
+        this.time = time;
+    }
+}
+
 class Graph{
     public HashMap<Integer, ArrayList<Integer>> adjList;
 
@@ -101,16 +121,14 @@ class GraphDirected{
 }
 
 public class GraphsPractise {
+
     public static void main(String[] args) {
-//        Graph graph = new Graph();
-//        graph.addEdge(1,2);
-//        graph.addEdge(1,3);
-//        graph.addEdge(2,5);
-//        graph.addEdge(2,6);
-//        graph.addEdge(3,4);
-//        graph.addEdge(3,7);
-//        graph.addEdge(8,4);
-//        graph.addEdge(8,7);
+        Graph graph = new Graph();
+        graph.addEdge(1,2);
+        graph.addEdge(2,3);
+        graph.addEdge(4,5);
+        graph.addEdge(5,6);
+        graph.addEdge(7,8);
 
 //        Graph cycleUndirectedGraph = new Graph();
 //        cycleUndirectedGraph.addEdge(1, 2);
@@ -147,22 +165,168 @@ public class GraphsPractise {
 //        print(dfsDetectCycleInUndirectedGraph(graph, graph.adjList.size()));
 //        print(dfsDetectCycleInUndirectedGraph(cycleUndirectedGraph, cycleUndirectedGraph.adjList.size()));
 
-        GraphDirected graphDirected = new GraphDirected();
-        graphDirected.addEdge(1,2);
-        graphDirected.addEdge(2,3);
-        graphDirected.addEdge(3,4);
-        graphDirected.addEdge(3,7);
-        graphDirected.addEdge(4,5);
-        graphDirected.addEdge(7,5);
-        graphDirected.addEdge(5,6);
-        graphDirected.addEdge(8,2);
-        graphDirected.addEdge(8,9);
-        graphDirected.addEdge(9,10);
-        graphDirected.addEdge(10,8);
+//        GraphDirected graphDirected = new GraphDirected();
+//        graphDirected.addEdge(1,2);
+//        graphDirected.addEdge(2,3);
+//        graphDirected.addEdge(3,4);
+//        graphDirected.addEdge(3,7);
+//        graphDirected.addEdge(4,5);
+//        graphDirected.addEdge(7,5);
+//        graphDirected.addEdge(5,6);
+//        graphDirected.addEdge(8,2);
+//        graphDirected.addEdge(8,9);
+//        graphDirected.addEdge(9,10);
+//        graphDirected.addEdge(10,8);
+//
+//        graphDirected.displayGraph();
 
-        graphDirected.displayGraph();
-        print(dfsDetectCycleInDirectedGraph(graphDirected, graphDirected.adjList.size()));
-        topologicalSort(graphDirected, graphDirected.adjList.size());
+//        print(dfsDetectCycleInDirectedGraph(graphDirected, graphDirected.adjList.size()));
+//        topologicalSort(graphDirected, graphDirected.adjList.size());
+//        numberOfProvinces(graph);
+
+//        int[][] area = new int[][]{{0,1,1,0},{0,1,1,0},{0,0,1,0},{0,0,0,0},{1,1,0,1}};
+//        numberOfIslands(area);
+
+//        int[][] grid = new int[][]{{1,1,1},{2,2,0},{2,2,2}};
+//        floodFillAlgo(grid, 2, 0, 3);
+
+        int[][] basket = new int[][]{{0, 1, 2},{0, 1, 1},{2, 1, 1}};
+        rottenOranges(basket);
+    }
+
+    public static void rottenOranges(int[][] basket){
+        int[][] vis = new int[basket.length][basket[0].length];
+        Queue<PairRottenOranges> queue = new LinkedList<>();
+        int cnt_fresh = 0;
+        for(int i = 0; i < basket.length; i++){
+            for(int j = 0; j < basket[0].length; j++){
+                if(basket[i][j] == 2){
+                    queue.add(new PairRottenOranges(i, j, 0));
+                    vis[i][j] = 2;
+                }
+                else{
+                    vis[i][j] = 0;
+                }
+                if(basket[i][j] == 1){
+                    cnt_fresh++;
+                }
+            }
+        }
+
+        int tm = 0;
+        int[] down = {-1,0,1,0};
+        int[] up = {0,1,0,-1};
+        int cnt = 0;
+        while(!queue.isEmpty()){
+            int r = queue.peek().row;
+            int c = queue.peek().col;
+            int t = queue.peek().time;
+            tm = Math.max(tm, t);
+            queue.poll();
+            for(int i = 0; i < 4; i++){
+                int nrow = r + down[i];
+                int ncol = c + up[i];
+                if(nrow >= 0 && nrow < basket.length && ncol >= 0 && ncol < basket[0].length && vis[nrow][ncol] == 0 && basket[nrow][ncol] == 1){
+                    queue.add(new PairRottenOranges(nrow, ncol, t+1));
+                    vis[nrow][ncol] = 2;
+                    cnt++;
+                }
+            }
+        }
+        if(cnt != cnt_fresh){
+            print("-1");
+        }
+        else{
+            print(tm);
+        }
+    }
+
+    public static void floodFillAlgo(int[][] grid, int sr, int sc, int newColor){
+        int iniColor = grid[sr][sc];
+        int[][] ans = grid;
+        int[] delRow = {-1,0,1,0};
+        int[] delCol = {0,1,0,-1};
+        dfsFloodFill(sr, sc, ans, grid, newColor, delRow, delCol, iniColor);
+        for(int i = 0; i < ans.length; i++){
+            for(int j = 0; j < ans.length; j++){
+                print(ans[i][j] + "");
+            }
+            print("\n");
+        }
+    }
+
+    public static void dfsFloodFill(int row, int col, int[][] ans, int[][] grid,
+                                    int newColor, int[] delRow, int[] delCol, int iniColor){
+
+        ans[row][col] = newColor;
+        int n = grid.length; int m = grid[0].length;
+        for(int i = 0; i < 4; i++){
+            int nRow = row + delRow[i];
+            int nCol = col + delCol[i];
+            if(nRow >= 0 && nRow < n && nCol >= 0 && nCol < m && grid[nRow][nCol] == iniColor && ans[nRow][nCol] != newColor){
+                dfsFloodFill(nRow, nCol, ans, grid, newColor, delRow, delCol, iniColor);
+            }
+        }
+
+    }
+
+    public static void numberOfIslands(int[][] area){
+        int[][] vis = new int[area.length][area[0].length];
+        int c = 0;
+        for(int row = 0; row < area.length; row++){
+            for(int col= 0; col < area[row].length; col++){
+                if(vis[row][col] == 0 && area[row][col] == 1){
+                    c++;
+                    bfsNumberOfIslands(row, col, vis, area);
+                }
+            }
+        }
+        print(c);
+    }
+
+    public static void bfsNumberOfIslands(int i, int j, int[][] vis, int[][] grid){
+        vis[i][j] = 1;
+        Queue<PairIsland> queue = new LinkedList<>();
+        queue.add(new PairIsland(i, j));
+        int n = grid.length;
+        int m = grid[0].length;
+        while(!queue.isEmpty()){
+            int row = queue.peek().row;
+            int col = queue.peek().col;
+            queue.poll();
+            for(int delRow = -1; delRow <= 1; delRow++){
+                for(int delcol = -1; delcol <= 1; delcol++){
+                    int nrow = row + delRow;
+                    int ncol = col + delcol;
+                    if(nrow >= 0 && nrow < n && ncol >= 0 && ncol < m && grid[nrow][ncol] == 1 && vis[nrow][ncol] == 0){
+                        vis[nrow][ncol] = 1;
+                        queue.add(new PairIsland(nrow, ncol));
+                    }
+                }
+            }
+        }
+    }
+
+    public static void numberOfProvinces(Graph graph){
+        int[] vis = new int[graph.adjList.size()+1];
+        int c = 0;
+
+        for(int i = 1; i <= graph.adjList.size(); i++){
+            if(vis[i] == 0){
+                c++;
+                dfsNumberOfProvinces(i, vis, graph);
+            }
+        }
+        print(c);
+    }
+
+    public static void dfsNumberOfProvinces(int node, int[] vis, Graph graph){
+        vis[node] = 1;
+        for(Integer it : graph.adjList.get(node)){
+            if(vis[it] == 0){
+                dfsNumberOfProvinces(it, vis, graph);
+            }
+        }
     }
 
     public static void topologicalSort(GraphDirected graphDirected, int size){
@@ -306,6 +470,7 @@ public class GraphsPractise {
         HashMap<Integer, ArrayList<Integer>> map = graph.adjList;
         ArrayList<Integer> ans = new ArrayList<>();
         Queue<Integer> queue = new LinkedList<>();
+
         queue.offer(3);
         vis[3] = true;
         while (!queue.isEmpty()){

@@ -1,6 +1,5 @@
 package TreadPractise;
 
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 
 public class SemaphoreReadWriteLock {
