@@ -104,6 +104,10 @@ class GraphDirected{
         adjList = new HashMap<>();
     }
 
+    public void addVertex(int source){
+        adjList.putIfAbsent(source, new ArrayList<>());
+    }
+
     public void addEdge(int source, int destination){
         adjList.putIfAbsent(source, new ArrayList<>());
         adjList.putIfAbsent(destination, new ArrayList<>());
@@ -123,18 +127,18 @@ class GraphDirected{
 public class GraphsPractise {
 
     public static void main(String[] args) {
-        Graph graph = new Graph();
-        graph.addEdge(1,2);
-        graph.addEdge(2,3);
-        graph.addEdge(2,6);
-        graph.addEdge(6,5);
-        graph.addEdge(5,4);
-        graph.addEdge(3,4);
-        graph.addEdge(4,7);
-        graph.addEdge(7,8);
+//        Graph graph = new Graph();
+//        graph.addEdge(1,2);
+//        graph.addEdge(2,3);
+//        graph.addEdge(2,6);
+//        graph.addEdge(6,5);
+//        graph.addEdge(5,4);
+//        graph.addEdge(3,4);
+//        graph.addEdge(4,7);
+//        graph.addEdge(7,8);
 
 //        isBipartiteBFS(graph.adjList.size(), graph);
-        isBipartiteDFS(graph.adjList.size(), graph);
+//        isBipartiteDFS(graph.adjList.size(), graph);
 
 //        Graph cycleUndirectedGraph = new Graph();
 //        cycleUndirectedGraph.addEdge(1, 2);
@@ -171,20 +175,23 @@ public class GraphsPractise {
 //        print(dfsDetectCycleInUndirectedGraph(graph, graph.adjList.size()));
 //        print(dfsDetectCycleInUndirectedGraph(cycleUndirectedGraph, cycleUndirectedGraph.adjList.size()));
 
-//        GraphDirected graphDirected = new GraphDirected();
-//        graphDirected.addEdge(1,2);
-//        graphDirected.addEdge(2,3);
-//        graphDirected.addEdge(3,4);
-//        graphDirected.addEdge(3,7);
-//        graphDirected.addEdge(4,5);
-//        graphDirected.addEdge(7,5);
-//        graphDirected.addEdge(5,6);
-//        graphDirected.addEdge(8,2);
-//        graphDirected.addEdge(8,9);
-//        graphDirected.addEdge(9,10);
-//        graphDirected.addEdge(10,8);
-//
-//        graphDirected.displayGraph();
+        GraphDirected graphDirected = new GraphDirected();
+        graphDirected.addEdge(0,1);
+        graphDirected.addEdge(1,2);
+        graphDirected.addEdge(2,3);
+        graphDirected.addEdge(3,4);
+        graphDirected.addEdge(3,5);
+        graphDirected.addEdge(5,6);
+        graphDirected.addEdge(4,6);
+        graphDirected.addEdge(6,7);
+        graphDirected.addEdge(11,9);
+        graphDirected.addEdge(9,10);
+        graphDirected.addEdge(10,8);
+        graphDirected.addEdge(8,9);
+        graphDirected.addEdge(8,1);
+
+        graphDirected.displayGraph();
+        findEventualSafeNodes(graphDirected.adjList.size(), graphDirected);
 
 //        print(dfsDetectCycleInDirectedGraph(graphDirected, graphDirected.adjList.size()));
 //        topologicalSort(graphDirected, graphDirected.adjList.size());
@@ -226,6 +233,41 @@ public class GraphsPractise {
 //        };
 //        numberOfDistinctIslands(grid);
 //        numberOfDistinctIslandsBFS(grid);
+    }
+
+    public static void findEventualSafeNodes(int size, GraphDirected graphDirected){
+        int[] vis = new int[size];
+        int[] pathVis = new int[size];
+        int[] check = new int[size];
+        for(int i = 0; i < size; i++){
+            if(vis[i] == 0){
+                dfsEventualSafeNodes(i, graphDirected, vis, pathVis, check);
+            }
+        }
+        List<Integer> safeNodes = new ArrayList<>();
+        for(int i = 0; i < size; i++){
+            if(check[i] == 1){
+                safeNodes.add(i);
+            }
+        }
+        print(safeNodes);
+    }
+
+    public static boolean dfsEventualSafeNodes(int node, GraphDirected graphDirected, int[] vis, int[] pathVis, int[] check){
+        vis[node] = 1; pathVis[node] = 1; check[node] = 0;
+        for(Integer it: graphDirected.adjList.get(node)){
+            if(vis[it] == 0){
+                if(dfsEventualSafeNodes(it, graphDirected, vis, pathVis, check)){
+                    return true;
+                }
+            }
+            else if(pathVis[it] == 1){
+                return true;
+            }
+        }
+        check[node] = 1;
+        pathVis[node] = 0;
+        return false;
     }
 
     public static void isBipartiteDFS(int V, Graph graph){
