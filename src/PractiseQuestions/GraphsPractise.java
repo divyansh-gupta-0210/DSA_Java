@@ -1,5 +1,6 @@
 package PractiseQuestions;
 
+import java.lang.reflect.Array;
 import java.util.*;
 
 class PairGraph{
@@ -190,8 +191,16 @@ public class GraphsPractise {
         graphDirected.addEdge(8,9);
         graphDirected.addEdge(8,1);
 
-        graphDirected.displayGraph();
-        findEventualSafeNodes(graphDirected.adjList.size(), graphDirected);
+//        graphDirected.displayGraph();
+//        findEventualSafeNodes(graphDirected.adjList.size(), graphDirected);
+//        kahnsAlgorithmTopologicalSorting(graphDirected);
+//        checkCycleInDirectedGraphBFS(graphDirected);
+//        int[][] arr = new int[][]{{1,0},{2,1},{3,2}};
+//        courseSchedular(arr);
+//        findEventualSafeNodesTopologicalSort(graphDirected);
+
+//        String[] dict = {"baa", "abcd", "abca", "cab", "cad"};
+//        alienDictionaryTopo(dict, 4);
 
 //        print(dfsDetectCycleInDirectedGraph(graphDirected, graphDirected.adjList.size()));
 //        topologicalSort(graphDirected, graphDirected.adjList.size());
@@ -233,6 +242,158 @@ public class GraphsPractise {
 //        };
 //        numberOfDistinctIslands(grid);
 //        numberOfDistinctIslandsBFS(grid);
+    }
+
+//    public static void shortestPath(int M, )
+
+    public static void alienDictionaryTopo(String[] dict, int numOfCharacters){
+        GraphDirected graphDirected = new GraphDirected();
+        for(int i = 0; i < dict.length-1; i++){
+            String s1 = dict[i];
+            String s2 = dict[i+1];
+            int len = Math.min(s1.length(), s2.length());
+            for(int ptr = 0; ptr < len; ptr++){
+                if(s1.charAt(ptr) != s2.charAt(ptr)){
+                    graphDirected.addEdge(s1.charAt(ptr) - 'a', s2.charAt(ptr) - 'a');
+                    break;
+                }
+            }
+        }
+        graphDirected.displayGraph();
+        List<Integer> topo = alienTopoSort(graphDirected, numOfCharacters);
+        String ans = "";
+        for(int it : topo){
+            ans += (char)(it + (int)'a');
+        }
+        print(ans);
+    }
+
+    public static List<Integer> alienTopoSort(GraphDirected graphDirected, int numOfChars){
+        int size = graphDirected.adjList.size();
+        int[] inDegree = new int[size];
+        for(int i = 0; i < size; i++){
+            for(Integer it : graphDirected.adjList.get(i)){
+                inDegree[it]++;
+            }
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        ArrayList<Integer> ans = new ArrayList<>();
+        for(int i = 0; i < size; i++){
+            if(inDegree[i] == 0){
+                queue.offer(i);
+            }
+        }
+        while(!queue.isEmpty()){
+            int node = queue.peek();
+            ans.add(node);
+            queue.poll();
+            for(Integer it: graphDirected.adjList.get(node)){
+                inDegree[it]--;
+                if(inDegree[it] == 0){
+                    queue.add(it);
+                }
+            }
+        }
+        return ans;
+    }
+
+    public static void findEventualSafeNodesTopologicalSort(GraphDirected graphDirected){
+        GraphDirected reverseGraph = new GraphDirected();
+        int size = graphDirected.adjList.size();
+        int[] indegree = new int[size];
+        for(int i = 0; i < size; i++){
+            for(Integer it : graphDirected.adjList.get(i)){
+                indegree[i]++;
+                reverseGraph.addEdge(it, i);
+            }
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        ArrayList<Integer> ans = new ArrayList<>();
+        for(int i = 0; i < size; i++){
+            if(indegree[i] == 0){
+                queue.offer(i);
+            }
+        }
+        while(!queue.isEmpty()){
+            int node = queue.peek();
+            ans.add(node);
+            queue.poll();
+            for(Integer it : reverseGraph.adjList.get(node)){
+                indegree[it]--;
+                if(indegree[it] == 0){
+                    queue.add(it);
+                }
+            }
+        }
+        print(ans);
+    }
+
+    public static void courseSchedular(int[][] arr){
+        GraphDirected graphDirected = new GraphDirected();
+        for(int[] i : arr){
+            graphDirected.addEdge(i[0], i[1]);
+        }
+        int size = graphDirected.adjList.size();
+        int[] indegree = new int[size];
+        for(int i = 0; i < size; i++){
+            for(Integer it : graphDirected.adjList.get(i)){
+                indegree[it]++;
+            }
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        for(int i = 0; i < size; i++){
+            if(indegree[i] == 0){
+                queue.add(i);
+            }
+        }
+
+        List<Integer> ans = new ArrayList<>();
+        while(!queue.isEmpty()){
+            int node = queue.peek();
+            ans.add(node);
+            queue.poll();
+            for(Integer it : graphDirected.adjList.get(node)){
+                indegree[it]--;
+                if(indegree[it] == 0){
+                    queue.add(it);
+                }
+            }
+        }
+        if(ans.size() == size){
+            print("false");
+        }
+        else{
+            print(ans);
+        }
+    }
+
+    public static void checkCycleInDirectedGraphBFS(GraphDirected graphDirected){
+        int size = graphDirected.adjList.size();
+        int[] inDegree = new int[size];
+        for(int i = 0; i < size; i++){
+            for(Integer it : graphDirected.adjList.get(i)){
+                inDegree[it]++;
+            }
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        for(int i = 0; i < size; i++){
+            if(inDegree[i] == 0){
+                queue.add(i);
+            }
+        }
+        int cnt = 0;
+        while(!queue.isEmpty()){
+            int node = queue.peek();
+            cnt++;
+            queue.poll();
+            for(Integer it: graphDirected.adjList.get(node)){
+                inDegree[it]--;
+                if(inDegree[it] == 0){
+                    queue.add(it);
+                }
+            }
+        }
+        print(cnt == size);
     }
 
     public static void findEventualSafeNodes(int size, GraphDirected graphDirected){
@@ -682,12 +843,44 @@ public class GraphsPractise {
         }
     }
 
+    public static void kahnsAlgorithmTopologicalSorting(GraphDirected graphDirected){
+        int size = graphDirected.adjList.size();
+        int[] indegree = new int[size+1];
+
+        for(int i = 0; i < size; i++){
+            for(Integer it : graphDirected.adjList.get(i)){
+                indegree[it]++;
+            }
+        }
+        Queue<Integer> queue = new LinkedList<>();
+        for(int i = 0; i < size; i++){
+            if(indegree[i] == 0){
+                queue.add(i);
+            }
+        }
+        int[] topoSort = new int[size];
+        int i = 0;
+        while(!queue.isEmpty()){
+            int node = queue.peek();
+            queue.poll();
+            topoSort[i++] = node;
+
+            for(Integer it : graphDirected.adjList.get(node)){
+                indegree[it]--;
+                if(indegree[it] == 0){
+                    queue.add(it);
+                }
+            }
+        }
+        print(Arrays.toString(topoSort));
+    }
+
     public static void topologicalSort(GraphDirected graphDirected, int size){
         int[] visited = new int[size+1];
         Stack<Integer> stack = new Stack<>();
         for(int i = 1; i <= size; i++){
             if(visited[i]==0){
-                dfsTopological(i, visited, stack, graphDirected);
+                dfsTopologicalDFS(i, visited, stack, graphDirected);
             }
         }
         while(!stack.isEmpty()){
@@ -695,11 +888,11 @@ public class GraphsPractise {
         }
     }
 
-    public static void dfsTopological(int node, int[] visited, Stack<Integer> st, GraphDirected graphDirected){
+    public static void dfsTopologicalDFS(int node, int[] visited, Stack<Integer> st, GraphDirected graphDirected){
         visited[node] = 1;
         for(Integer it : graphDirected.adjList.get(node)){
             if(visited[it] == 0){
-                dfsTopological(it, visited, st, graphDirected);
+                dfsTopologicalDFS(it, visited, st, graphDirected);
             }
         }
         st.add(node);
@@ -747,8 +940,7 @@ public class GraphsPractise {
         return false;
     }
 
-    public static boolean dfsCheckCycle(int node, int parent, Set<Integer> visited, HashMap<Integer, ArrayList<Integer>> map)
-    {
+    public static boolean dfsCheckCycle(int node, int parent, Set<Integer> visited, HashMap<Integer, ArrayList<Integer>> map) {
         visited.add(node);
         for(Integer neighbor : map.get(node)){
             if(!visited.contains(neighbor)){
