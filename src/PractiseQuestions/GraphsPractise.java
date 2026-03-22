@@ -32,6 +32,46 @@ class PairRottenOranges{
     }
 }
 
+class PairDijkstraPQ{
+    int dist;
+    int node;
+    public PairDijkstraPQ(int dist, int node){
+        this.dist = dist;
+        this.node = node;
+    }
+}
+
+class PairGraphWord{
+    String firstWord;
+    int level;
+    public PairGraphWord(String firstWord, int level){
+        this.firstWord = firstWord;
+        this.level = level;
+    }
+}
+
+class TupleGraph{
+    int distance;
+    int row;
+    int col;
+    public TupleGraph(int distance, int row, int col){
+        this.distance = distance;
+        this.row = row;
+        this.col = col;
+    }
+}
+
+class TupleGraphFlights{
+    int stops;
+    int node;
+    int cost;
+    public TupleGraphFlights(int stops, int node, int cost){
+        this.cost = cost;
+        this.node = node;
+        this.stops = stops;
+    }
+}
+
 class Graph{
     public HashMap<Integer, ArrayList<Integer>> adjList;
 
@@ -162,13 +202,54 @@ public class GraphsPractise {
 //        graph.displayGraph();
 
 //        GraphWeighted graphWeighted = new GraphWeighted();
-//        graphWeighted.addEdge(1,2,2);
-//        graphWeighted.addEdge(1,3,3);
-//        graphWeighted.addEdge(2,4,1);
-//        graphWeighted.addEdge(3,4,4);
-//        graphWeighted.addEdge(2,5,6);
-//        graphWeighted.addEdge(4,5,3);
+//        graphWeighted.addEdge(0,1,2);
+//        graphWeighted.addEdge(0,4,1);
+//        graphWeighted.addEdge(1,2,3);
+//        graphWeighted.addEdge(4,2,2);
+//        graphWeighted.addEdge(4,5,4);
+//        graphWeighted.addEdge(2,3,6);
+//        graphWeighted.addEdge(5,3,1);
 //        graphWeighted.displayGraph();
+
+//        int[][] graphEdges = new int[][]{{0,1,2}, {0,4,1},{1,2,3},{4,2,2},{4,5,4},{2,3,6},{5,3,1}};
+//        int n = 6; int m = 7;
+//        shortestPathInDirectedGraph(n, m, graphEdges);
+
+//        int[][] graphEdges = new int[][]{{0,1}, {0,3},{3,4},{4,5},{5,6},{1,2},{2,6},{6,7},{7,8},{6,8}};
+//        int n = 9, m = 10;
+//        shortestPathInUndirectedGraph(n, m, graphEdges, 0);
+
+//        String[] wordList = new String[]{"des", "der", "dfr", "dgt", "dfs"};
+//        String startWord = "der"; String targetWord = "dfs";
+//        wordLadderLength(startWord, targetWord, wordList);
+//        wordLadderSequence(startWord, targetWord, wordList);
+
+//        int v = 3, s = 0;
+//        dijkstraAlgoPQ(v, s);
+//        dijkstraAlgoSet(v, s);
+
+//        int n = 5, m = 6;
+//        int[][] edges = {{1,2,2},{2,5,5},{2,3,4},{1,4,1},{4,3,3},{3,5,1}};
+//        shortestPathInWeightedUndirectedGraph(n, m, edges);
+
+//        int[] source = {0, 1};
+//        int[] destination = {2,2};
+//        int[][] grid = {
+//                {1,1,1,1},
+//                {1,1,0,1},
+//                {1,1,1,1},
+//                {1,1,0,0},
+//                {1,0,0,1}
+//        };
+//        print(shortestPathInABinaryMaze(grid, source, destination));
+
+//        int[][] heights = {{1,2,2},{3,8,2},{5,3,5}};
+//        print(pathWithMinimumEffort(heights));
+
+        int source = 0; int destination = 3; int k = 1; int n = 4;
+        int[][] flights = new int[][]{{0,1,100},{1,2,100},{2,0,100},{1,3,600},{2,3,200}};
+        print(cheapestFlightWithinKStops(n, flights,source, destination, k));
+
 //        bfsGraphTraversal(graph);
 //        dfsGraphTraversal(graph);
 //        print(bfsDetectCycleInUndirectedGraph(cycleUndirectedGraph, cycleUndirectedGraph.adjList.size()));
@@ -176,20 +257,20 @@ public class GraphsPractise {
 //        print(dfsDetectCycleInUndirectedGraph(graph, graph.adjList.size()));
 //        print(dfsDetectCycleInUndirectedGraph(cycleUndirectedGraph, cycleUndirectedGraph.adjList.size()));
 
-        GraphDirected graphDirected = new GraphDirected();
-        graphDirected.addEdge(0,1);
-        graphDirected.addEdge(1,2);
-        graphDirected.addEdge(2,3);
-        graphDirected.addEdge(3,4);
-        graphDirected.addEdge(3,5);
-        graphDirected.addEdge(5,6);
-        graphDirected.addEdge(4,6);
-        graphDirected.addEdge(6,7);
-        graphDirected.addEdge(11,9);
-        graphDirected.addEdge(9,10);
-        graphDirected.addEdge(10,8);
-        graphDirected.addEdge(8,9);
-        graphDirected.addEdge(8,1);
+//        GraphDirected graphDirected = new GraphDirected();
+//        graphDirected.addEdge(0,1);
+//        graphDirected.addEdge(1,2);
+//        graphDirected.addEdge(2,3);
+//        graphDirected.addEdge(3,4);
+//        graphDirected.addEdge(3,5);
+//        graphDirected.addEdge(5,6);
+//        graphDirected.addEdge(4,6);
+//        graphDirected.addEdge(6,7);
+//        graphDirected.addEdge(11,9);
+//        graphDirected.addEdge(9,10);
+//        graphDirected.addEdge(10,8);
+//        graphDirected.addEdge(8,9);
+//        graphDirected.addEdge(8,1);
 
 //        graphDirected.displayGraph();
 //        findEventualSafeNodes(graphDirected.adjList.size(), graphDirected);
@@ -244,7 +325,396 @@ public class GraphsPractise {
 //        numberOfDistinctIslandsBFS(grid);
     }
 
-//    public static void shortestPath(int M, )
+    public static int cheapestFlightWithinKStops(int n, int[][] flights, int src, int des, int k){
+        ArrayList<ArrayList<Edge>> adj = new ArrayList<>();
+        for(int i = 0; i < n; i++){
+            adj.add(new ArrayList<>());
+        }
+        for(int i = 0; i < flights.length; i++){
+            adj.get(flights[i][0]).add(new Edge(flights[i][1], flights[i][2]));
+        }
+        Queue<TupleGraphFlights> queue = new LinkedList<>();
+
+        queue.offer(new TupleGraphFlights(0, src, 0));
+        int[] distance = new int[n];
+        Arrays.fill(distance, (int)(1e9));
+        distance[src] = 0;
+        while(!queue.isEmpty()){
+            TupleGraphFlights it = queue.poll();
+            int stops = it.stops;
+            int node = it.node;
+            int cost = it.cost;
+            if(stops > k){
+                continue;
+            }
+            for(Edge iter : adj.get(node)){
+                int adjNode = iter.destination;
+                int edN = iter.weight;
+                if(cost + edN < distance[adjNode] && stops <= k){
+                    distance[adjNode] = cost + edN;
+                    queue.offer(new TupleGraphFlights(stops + 1, adjNode, cost + edN));
+                }
+            }
+        }
+        if(distance[des] == (int)(1e9)){
+            return -1;
+        }
+        else{
+            return distance[des];
+        }
+    }
+
+    public static int pathWithMinimumEffort(int[][] height){
+        PriorityQueue<TupleGraph> pq = new PriorityQueue<>((x, y) -> x.distance - y.distance);
+        int n = height.length; int m = height[0].length;
+        int[][] dist = new int[n][m];
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                dist[i][j] = (int)(1e9);
+            }
+        }
+        dist[0][0] = 0;
+        int[] dr = {-1, 0, 1, 0};
+        int[] dc = {0, 1, 0, -1};
+        pq.offer(new TupleGraph(0, 0, 0));
+        while(!pq.isEmpty()){
+            TupleGraph it = pq.poll();
+            int diff = it.distance;
+            int row = it.row;
+            int col = it.col;
+            if(row == n - 1 && col == m-1){
+                return diff;
+            }
+            for(int i = 0; i < 4; i++){
+                int newR = row + dr[i];
+                int newC = col + dc[i];
+                if(newR >= 0 && newC >= 0 && newR < n && newC < m){
+                    int newEffort = Math.max(diff, Math.abs(height[row][col] - height[newR][newC]));
+                    if(newEffort < dist[newR][newC]){
+                        dist[newR][newC] = newEffort;
+                        pq.offer(new TupleGraph(newEffort, newR, newC));
+                    }
+                }
+            }
+        }
+        return 0;
+    }
+
+    public static int shortestPathInABinaryMaze(int[][] grid, int[] source, int[] destination){
+        Queue<TupleGraph> queue = new LinkedList<>();
+        int n = grid.length; int m = grid[0].length;
+        int[][] dist = new int[n][m];
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                dist[i][j] = (int)(1e9);
+            }
+        }
+        dist[source[0]][source[1]] = 0;
+        queue.offer(new TupleGraph(0, source[0], source[1]));
+        int[] dr = {-1, 0, 1, 0};
+        int[] dc = {0, 1, 0, -1};
+        while(!queue.isEmpty()){
+            TupleGraph it = queue.poll();
+            int dis = it.distance;
+            int r = it.row;
+            int c = it.col;
+            for(int i = 0; i < 4; i++){
+                int newR = r + dr[i];
+                int newC = c + dc[i];
+                if(newR >= 0 && newC >= 0 && newC < m && newR < n && grid[newR][newC] == 1 && dis + 1 < dist[newR][newC]){
+                    dist[newR][newC] = 1 + dis;
+                    if(newR == destination[0] && newC == destination[1]){
+                        return dis + 1;
+                    }
+                    queue.add(new TupleGraph(1 + dis, newR, newC));
+                }
+            }
+        }
+        return -1;
+    }
+
+    public static void shortestPathInWeightedUndirectedGraph(int n, int m, int[][] edges){
+        ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+        for(int i = 0; i <= n; i++){
+            graph.add(new ArrayList<>());
+        }
+        for(int i = 0; i < m; i++){
+            graph.get(edges[i][0]).add(new Edge(edges[i][1], edges[i][2]));
+            graph.get(edges[i][1]).add(new Edge(edges[i][0], edges[i][2]));
+        }
+        PriorityQueue<PairDijkstraPQ> pq = new PriorityQueue<>((x, y) -> x.dist - y.dist);
+        int[] dist = new int[n+1];
+        int[] parent = new int[n+1];
+        for(int i = 0; i <= n; i++){
+            dist[i] = (int)(1e9);
+            parent[i] = i;
+        }
+        dist[1] = 0;
+        pq.add(new PairDijkstraPQ(0, 1));
+        while(!pq.isEmpty()){
+            PairDijkstraPQ it = pq.poll();
+            int node = it.node;
+            int dis = it.dist;
+            for(Edge neighbours : graph.get(node)){
+                int adjNode = neighbours.destination;
+                int edN = neighbours.weight;
+                if(dis + edN < dist[adjNode]){
+                    dist[adjNode] = dis + edN;
+                    pq.add(new PairDijkstraPQ(dis + edN, adjNode));
+                    parent[adjNode] = node;
+                }
+            }
+        }
+        List<Integer> path = new ArrayList<>();
+        if(dist[n] == (int) (1e9)){
+            path.add(-1);
+            print(path);
+        }
+        int node = n;
+        while(parent[node] != node){
+            path.add(node);
+            node = parent[node];
+        }
+        path.add(1);
+        Collections.reverse(path);
+        print(path);
+    }
+
+    public static void dijkstraAlgoSet(int v, int s){
+        TreeSet<PairDijkstraPQ> set = new TreeSet<>((a, b) -> a.dist == b.dist ? a.node - b.node : a.dist - b.dist);
+        int[] dist = new int[v];
+        Arrays.fill(dist, (int)(1e9));
+        dist[s] = 0;
+        ArrayList<ArrayList<ArrayList<Integer>>> adj = new ArrayList<>();
+        for (int i = 0; i < v; i++) {
+            adj.add(new ArrayList<>());
+        }
+
+        // same graph
+        adj.get(0).add(new ArrayList<>(Arrays.asList(1, 1)));
+        adj.get(1).add(new ArrayList<>(Arrays.asList(0, 1)));
+        adj.get(0).add(new ArrayList<>(Arrays.asList(2, 4)));
+        adj.get(2).add(new ArrayList<>(Arrays.asList(0, 4)));
+        adj.get(1).add(new ArrayList<>(Arrays.asList(2, 2)));
+        adj.get(2).add(new ArrayList<>(Arrays.asList(1, 2)));
+
+        set.add(new PairDijkstraPQ(0, s));
+        while (!set.isEmpty()){
+            PairDijkstraPQ pairDijkstraPQ = set.pollFirst();
+            int dis = pairDijkstraPQ.dist;
+            int node = pairDijkstraPQ.node;
+            for(int i = 0; i < adj.get(node).size(); i++){
+                int edgeNode = adj.get(node).get(i).get(0);
+                int edgeWeight = adj.get(node).get(i).get(1);
+                if(dis + edgeWeight < dist[edgeNode]){
+                    if(dist[edgeNode] != (int)(1e9)){
+                        set.remove(new PairDijkstraPQ(dist[edgeNode], edgeNode));
+                    }
+                    dist[edgeNode] = dis + edgeWeight;
+                    set.add(new PairDijkstraPQ(dist[edgeNode], edgeNode));
+                }
+            }
+        }
+        print(Arrays.toString(dist));
+    }
+
+    public static void dijkstraAlgoPQ(int v, int s){
+        PriorityQueue<PairDijkstraPQ> priorityQueue = new PriorityQueue<>((a,b) -> a.dist - b.dist);
+        int[] dist = new int[v];
+        Arrays.fill(dist, (int)(1e9));
+        dist[s] = 0;
+
+        ArrayList<ArrayList<ArrayList<Integer>>> adj = new ArrayList<>();
+        for (int i = 0; i < v; i++) {
+            adj.add(new ArrayList<>());
+        }
+        adj.get(0).add(new ArrayList<>(Arrays.asList(1, 1)));
+        adj.get(1).add(new ArrayList<>(Arrays.asList(0, 1)));
+        adj.get(0).add(new ArrayList<>(Arrays.asList(2, 4)));
+        adj.get(2).add(new ArrayList<>(Arrays.asList(0, 4)));
+        adj.get(1).add(new ArrayList<>(Arrays.asList(2, 2)));
+        adj.get(2).add(new ArrayList<>(Arrays.asList(1, 2)));
+
+        print(adj + "\n");
+        priorityQueue.add(new PairDijkstraPQ(0, s));
+
+        while(!priorityQueue.isEmpty()){
+            PairDijkstraPQ current = priorityQueue.poll();
+            int dis = current.dist;
+            int node = current.node;
+            if (dis > dist[node]) continue;
+            for (int i = 0; i < adj.get(node).size(); i++) {
+                int edgeNode = adj.get(node).get(i).get(0);
+                int edgeWeight = adj.get(node).get(i).get(1);
+
+                if (dis + edgeWeight < dist[edgeNode]) {
+                    dist[edgeNode] = dis + edgeWeight;
+                    priorityQueue.add(new PairDijkstraPQ(dist[edgeNode], edgeNode));
+                }
+            }
+        }
+        print(Arrays.toString(dist));
+    }
+
+    public static void wordLadderSequence(String startWord, String targetWord, String[] wordList){
+        Set<String> st = new HashSet<>();
+        int len = wordList.length;
+        for(int i = 0; i < len; i++){
+            st.add(wordList[i]);
+        }
+        Queue<ArrayList<String>> queue = new LinkedList<>();
+        ArrayList<String> ls = new ArrayList<>();
+        ls.add(startWord);
+        queue.add(ls);
+
+        ArrayList<String> usedOnLevel = new ArrayList<>();
+        usedOnLevel.add(startWord);
+
+        int level = 0;
+        ArrayList<ArrayList<String>> ans = new ArrayList<>();
+
+        while(!queue.isEmpty()){
+            ArrayList<String> vec = queue.peek();
+            queue.poll();
+            if(vec.size() > level){
+                level++;
+                for(String it : usedOnLevel){
+                    st.remove(it);
+                }
+            }
+            String word = vec.get(vec.size()-1);
+            if(word.equals(targetWord)){
+                if(ans.isEmpty()){
+                    ans.add(vec);
+                }
+                else if(ans.get(0).size()==vec.size()){
+                    ans.add(vec);
+                }
+            }
+            for(int i = 0; i < word.length(); i++){
+                char[] replacedCharArray = word.toCharArray();
+                for(char c = 'a'; c <= 'z'; c++){
+                    replacedCharArray[i] = c;
+                    String replacedWord = new String(replacedCharArray);
+                    if(st.contains(replacedWord)){
+                        vec.add(replacedWord);
+                        ArrayList<String> temp = new ArrayList<>(vec);
+                        queue.add(temp);
+                        usedOnLevel.add(replacedWord);
+                        vec.remove(vec.size()-1);
+                    }
+                }
+            }
+        }
+        print(ans);
+    }
+
+    public static void wordLadderLength(String startWord, String targetWord, String[] wordList){
+        Queue<PairGraphWord> queue = new LinkedList<>();
+        queue.add(new PairGraphWord(startWord, 1));
+        Set<String> st = new HashSet<>();
+        int len = wordList.length;
+        for(int i = 0; i < len; i++){
+            st.add(wordList[i]);
+        }
+        st.remove(startWord);
+        while(!queue.isEmpty()){
+            String word = queue.peek().firstWord;
+            int steps = queue.peek().level;
+            queue.poll();
+            if(word.equals(targetWord)){
+                print(steps);
+                break;
+            }
+            for(int i = 0; i < word.length(); i++){
+                char[] replacedCharArray = word.toCharArray();
+                for(char ch = 'a'; ch <= 'z'; ch++){
+                    replacedCharArray[i] = ch;
+                    String replacedWord = new String(replacedCharArray);
+                    if(st.contains(replacedWord)){
+                        st.remove(replacedWord);
+                        queue.add(new PairGraphWord(replacedWord, steps + 1));
+                    }
+                }
+            }
+        }
+        print(0);
+    }
+
+    public static void shortestPathInUndirectedGraph(int n, int m, int[][] graphEdges, int src) {
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+        for(int i = 0; i < n; i++){
+            graph.add(new ArrayList<>());
+        }
+        for(int i = 0; i < m; i++){
+            graph.get(graphEdges[i][0]).add(graphEdges[i][1]);
+            graph.get(graphEdges[i][1]).add(graphEdges[i][0]);
+        }
+        int[] dist = new int[n];
+        Arrays.fill(dist, (int)(10e9));
+        dist[src] = 0;
+        Queue<Integer> queue = new LinkedList<>();
+        queue.offer(src);
+        while(!queue.isEmpty()){
+            int node = queue.peek();
+            queue.poll();
+            for(Integer it : graph.get(node)){
+                if(dist[node] + 1 < dist[it]){
+                    dist[it] = 1 + dist[node];
+                    queue.add(it);
+                }
+            }
+        }
+        print(Arrays.toString(dist));
+    }
+
+    public static void shortestPathInDirectedGraph(int n, int m, int[][] graphEdges){
+        ArrayList<ArrayList<Edge>> adjGraph = new ArrayList<>();
+        for(int i = 0; i < n; i++){
+            ArrayList<Edge> temp = new ArrayList<>();
+            adjGraph.add(temp);
+        }
+        for(int i = 0; i < m; i++){
+            int u = graphEdges[i][0];
+            int v = graphEdges[i][1];
+            int w = graphEdges[i][2];
+            adjGraph.get(u).add(new Edge(v, w));
+        }
+        int[] vis = new int[n];
+        Stack<Integer> st = new Stack<>();
+        for(int i = 0; i < n; i++){
+            if(vis[i] == 0){
+                topoSortShortestPath(i, adjGraph, vis, st);
+            }
+        }
+        int[] dist = new int[n];
+        Arrays.fill(dist, (int)(10e9));
+        dist[0] = 0;
+        while(!st.isEmpty()){
+            int node = st.peek();
+            st.pop();
+            for(int i = 0; i < adjGraph.get(node).size(); i++){
+                int v = adjGraph.get(node).get(i).destination;
+                int wt = adjGraph.get(node).get(i).weight;
+                if(dist[node] + wt < dist[v]){
+                    dist[v] = wt + dist[node];
+                }
+            }
+        }
+        print(Arrays.toString(dist));
+    }
+
+    public static void topoSortShortestPath(int node, ArrayList<ArrayList<Edge>> adjGraph, int[] vis, Stack<Integer> st){
+        vis[node] = 1;
+        for(int i = 0; i < adjGraph.get(node).size(); i++){
+            int v = adjGraph.get(node).get(i).destination;
+            if(vis[v] == 0){
+                topoSortShortestPath(v, adjGraph, vis, st);
+            }
+        }
+        st.add(node);
+    }
 
     public static void alienDictionaryTopo(String[] dict, int numOfCharacters){
         GraphDirected graphDirected = new GraphDirected();
