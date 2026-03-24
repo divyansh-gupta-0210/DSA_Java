@@ -1,6 +1,5 @@
 package PractiseQuestions;
 
-import java.lang.reflect.Array;
 import java.util.*;
 
 class PairGraph{
@@ -9,6 +8,15 @@ class PairGraph{
     public PairGraph(int node, int parent){
         this.node = node;
         this.parent = parent;
+    }
+}
+
+class PairGraphMinMultiplication{
+    int num;
+    int steps;
+    public PairGraphMinMultiplication(int num, int steps){
+        this.num = num;
+        this.steps = steps;
     }
 }
 
@@ -165,6 +173,31 @@ class GraphDirected{
     }
 }
 
+class DisjointSet{
+    List<Integer> rank = new ArrayList<>();
+    List<Integer> parent = new ArrayList<>();
+    public DisjointSet(int n){
+        for(int i = 0; i < n; i++){
+            rank.add(0);
+            parent.add(i);
+        }
+    }
+
+    public int findUPar(int node){
+        if(node == parent.get(node)){
+            return node;
+        }
+        int ulp = findUPar(parent.get(node));
+        parent.set(node, ulp);
+        return parent.get(node);
+    }
+
+    public void unionByRank(int u, int v){
+
+    }
+
+}
+
 public class GraphsPractise {
 
     public static void main(String[] args) {
@@ -246,9 +279,40 @@ public class GraphsPractise {
 //        int[][] heights = {{1,2,2},{3,8,2},{5,3,5}};
 //        print(pathWithMinimumEffort(heights));
 
-        int source = 0; int destination = 3; int k = 1; int n = 4;
-        int[][] flights = new int[][]{{0,1,100},{1,2,100},{2,0,100},{1,3,600},{2,3,200}};
-        print(cheapestFlightWithinKStops(n, flights,source, destination, k));
+//        int source = 0; int destination = 3; int k = 1; int n = 4;
+//        int[][] flights = new int[][]{{0,1,100},{1,2,100},{2,0,100},{1,3,600},{2,3,200}};
+//        print(cheapestFlightWithinKStops(n, flights,source, destination, k));
+//        int start = 3, end = 75, mod = 100000;
+//        int[] arr = {2, 5, 7};
+//        print(minimumMultiplications(arr, start, end, mod));
+
+//        int n = 7, m = 10;
+//        int[][] edges = {{0,6,7},{0,1,2},{1,2,3},{1,3,3},{6,3,3},{3,5,1},{6,5,1},{2,5,1},{0,4,5},{4,6,2}};
+//        countPaths(n, edges);
+
+//        int[][] edges = {{0,1,9}};
+//        int s = 0;
+//        int v = 2;
+//        print(Arrays.toString(bellmanFordAlgo(edges, s, v)));
+
+//        int[][] matrix = {{0,1,43},{1,0,6},{-1,-1,0}};
+//        floydWarshallAlgo(matrix);
+
+//        int[][] edges = {{0,1,3},{1,2,1},{1,3,4},{2,3,1}};
+//        int n = 4, m = 4;
+//        findCityWithThresholdFW(n, m, edges, 4);
+//        findCityWithThresholdDij(n, m, edges, 4);
+
+//        int[][] edges = {
+//                {0, 1, 2},
+//                {0, 3, 6},
+//                {1, 2, 3},
+//                {1, 3, 8},
+//                {1, 4, 5},
+//                {2, 4, 7},
+//                {3, 4, 1}
+//        };
+//        minimumSpanningTree(5, edges);
 
 //        bfsGraphTraversal(graph);
 //        dfsGraphTraversal(graph);
@@ -323,6 +387,274 @@ public class GraphsPractise {
 //        };
 //        numberOfDistinctIslands(grid);
 //        numberOfDistinctIslandsBFS(grid);
+    }
+
+    public static void minimumSpanningTree(int n, int[][] edges){
+        ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+        for(int i = 0; i < n; i++){
+            graph.add(new ArrayList<>());
+        }
+        for(int i = 0; i < edges.length; i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int w = edges[i][2];
+            graph.get(u).add(new Edge(v, w));
+            graph.get(v).add(new Edge(u, w));
+        }
+        PriorityQueue<PairDijkstraPQ> pq = new PriorityQueue<>((a, b) -> a.dist - b.dist);
+        int[] vis = new int[n];
+        pq.offer(new PairDijkstraPQ(0, 0));
+        int sum = 0;
+        while(!pq.isEmpty()){
+            PairDijkstraPQ curr = pq.poll();
+            int node = curr.node;
+            int wt = curr.dist;
+            if(vis[node] == 1){
+                continue;
+            }
+            vis[node] = 1;
+            sum += wt;
+            for(Edge edge : graph.get(node)){
+                int adjNode = edge.destination;
+                int adjWt = edge.weight;
+                if(vis[adjNode] == 0){
+                    pq.offer(new PairDijkstraPQ(adjWt, adjNode));
+                }
+            }
+        }
+        print(sum);
+    }
+
+    public static void findCityWithThresholdDij(int n, int m, int[][] edges, int threshold){
+        ArrayList<ArrayList<Edge>> graph = new ArrayList<>();
+        for(int i = 0; i < edges.length; i++){
+            graph.add(new ArrayList<>());
+        }
+        for(int i = 0; i < m; i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int w = edges[i][2];
+
+            graph.get(u).add(new Edge(v, w));
+            graph.get(v).add(new Edge(u, w));
+        }
+        int cntCity = n;
+        int cityNo = -1;
+        for(int i = 0; i < n; i++){
+            int[] dist = dijkstraAlgoToFindCityWithMinThreshold(n, graph, i);
+            int count = 0;
+            for(int j = 0; j < n; j++){
+                if(dist[j] <= threshold){
+                    count++;
+                }
+            }
+            if(count <= cntCity){
+                cntCity = count;
+                cityNo = i;
+            }
+        }
+        print(cityNo);
+    }
+
+    public static int[] dijkstraAlgoToFindCityWithMinThreshold(int n, ArrayList<ArrayList<Edge>> graph, int src){
+        PriorityQueue<PairDijkstraPQ> priorityQueue = new PriorityQueue<>((a, b) -> a.dist - b.dist);
+        int[] dist = new int[n];
+        priorityQueue.offer(new PairDijkstraPQ(0, src));
+        dist[src] = 0;
+        while(!priorityQueue.isEmpty()){
+            PairDijkstraPQ it = priorityQueue.poll();
+            int dis = it.dist;
+            int node = it.node;
+            for(Edge iter : graph.get(node)){
+                int adjNode = iter.destination;
+                int edN = iter.weight;
+                if(edN + dis < dist[adjNode]){
+                    dist[adjNode] = edN + dis;
+                    priorityQueue.offer(new PairDijkstraPQ(dist[adjNode], adjNode));
+                }
+            }
+        }
+        return dist;
+    }
+
+    public static void findCityWithThresholdFW(int n, int m, int[][] edges, int threshold){
+        int[][] distance = new int[n][n];
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                distance[i][j] = Integer.MAX_VALUE;
+            }
+        }
+        for(int i = 0; i < m; i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int w = edges[i][2];
+            distance[u][v] = w;
+            distance[v][u] = w;
+        }
+        for(int i = 0; i < n; i++){
+            distance[i][i] = 0;
+        }
+        for(int k = 0; k < n; k++){
+            for(int i = 0; i < n; i++){
+                for(int j = 0; j < n; j++){
+                    if(distance[i][k] == Integer.MAX_VALUE || distance[k][j] == Integer.MAX_VALUE){
+                        continue;
+                    }
+                    else{
+                        distance[i][j] = Math.min(distance[i][j], distance[i][k] + distance[k][j]);
+                    }
+                }
+            }
+        }
+        int cntCity = n;
+        int cityNo = -1;
+        for(int city = 0; city < n; city++){
+            int cnt = 0;
+            for(int adjCity = 0; adjCity < n; adjCity++){
+                if(distance[city][adjCity] <= threshold){
+                    cnt++;
+                }
+            }
+            if(cnt <= cntCity){
+                cntCity = cnt;
+                cityNo = city;
+            }
+        }
+        print(cityNo);
+    }
+
+    public static void floydWarshallAlgo(int[][] matrix){
+        int n = matrix.length;
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                if(matrix[i][j] == -1){
+                    matrix[i][j] = (int)(1e9);
+                }
+                if(i == j){
+                    matrix[i][j] = 0;
+                }
+            }
+        }
+        for(int k = 0; k < n; k++){
+            for(int i = 0; i < n; i++){
+                for(int j = 0; j < n; j++){
+                    matrix[i][j] = Math.min(matrix[i][j], matrix[i][k] + matrix[k][j]);
+                }
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            if(matrix[i][i] < 0){
+                print("Not possible");
+            }
+        }
+
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                if(matrix[i][j] == (int)(1e9)){
+                    matrix[i][j] = -1;
+                }
+            }
+        }
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < n; j++){
+                print(matrix[i][j]);
+            }
+        }
+    }
+
+    public static int[] bellmanFordAlgo(int[][] edges, int s, int v){
+        int[] dist = new int[v];
+        Arrays.fill(dist, (int)(1e9));
+        dist[s] = 0;
+
+        for (int i = 0; i < v - 1; i++){
+            for(int[] edge : edges){
+                int u = edge[0];
+                int vtx = edge[1];
+                int wt = edge[2];
+                if(dist[u] != (int)(1e9) && dist[u] + wt < dist[vtx]){
+                    dist[vtx] = dist[u] + wt;
+                }
+            }
+        }
+
+        for(int[] edge : edges){
+            int u = edge[0];
+            int vtx = edge[1];
+            int wt = edge[2];
+            if(dist[u] != (int)(1e9) && dist[u] + wt < dist[vtx]){
+                int[] temp = new int[1];
+                temp[0] = -1;
+                return temp;
+            }
+        }
+        return dist;
+    }
+
+    public static void countPaths(int n, int[][] edges){
+        ArrayList<ArrayList<Edge>> adjGraph = new ArrayList<>();
+        for(int i = 0; i < n; i++){
+            adjGraph.add(new ArrayList<>());
+        }
+        for(int i = 0; i < edges.length; i++){
+            adjGraph.get(edges[i][0]).add(new Edge(edges[i][1], edges[i][2]));
+            adjGraph.get(edges[i][1]).add(new Edge(edges[i][0], edges[i][2]));
+        }
+        PriorityQueue<PairDijkstraPQ> priorityQueue = new PriorityQueue<>((a, b) -> a.dist - b.dist);
+        priorityQueue.offer(new PairDijkstraPQ(0, 0));
+        int[] dist = new int[n];
+        Arrays.fill(dist, (int)(1e9));
+        int[] ways = new int[n];
+        dist[0] = 0;
+        int mod = (int)(1e9) + 7;
+        ways[0] = 1;
+
+        while (!priorityQueue.isEmpty()){
+            PairDijkstraPQ it = priorityQueue.poll();
+            int dis = it.dist;
+            int node = it.node;
+            if(dis > dist[node]){
+                continue;
+            }
+            for(Edge iter : adjGraph.get(node)){
+                int adjNode = iter.destination;
+                int edN = iter.weight;
+                if(dis + edN < dist[adjNode]){
+                    dist[adjNode] = dis + edN;
+                    priorityQueue.add(new PairDijkstraPQ(dis + edN, adjNode));
+                    ways[adjNode] = ways[node];
+                }
+                else if(dis + edN == dist[adjNode]){
+                    ways[adjNode] = (ways[adjNode] + ways[node]) % mod;
+                }
+            }
+        }
+        print(ways[n-1] % mod);
+    }
+
+    public static int minimumMultiplications(int[] arr, int start, int end, int mod){
+        Queue<PairGraphMinMultiplication> queue = new LinkedList<>();
+        queue.offer(new PairGraphMinMultiplication(start, 0));
+        int[] dist = new int[100000];
+        Arrays.fill(dist, (int)(1e9));
+        dist[start] = 0;
+        while(!queue.isEmpty()){
+            int node = queue.peek().num;
+            int steps = queue.peek().steps;
+            queue.poll();
+            for(Integer it : arr){
+                int num = (it * node) % mod;
+                if(steps + 1 < dist[num]){
+                    dist[num] = steps + 1;
+                    if(num == end){
+                        return steps + 1;
+                    }
+                    queue.offer(new PairGraphMinMultiplication(num, steps + 1));
+                }
+            }
+        }
+        return -1;
     }
 
     public static int cheapestFlightWithinKStops(int n, int[][] flights, int src, int des, int k){
