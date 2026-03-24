@@ -176,10 +176,12 @@ class GraphDirected{
 class DisjointSet{
     List<Integer> rank = new ArrayList<>();
     List<Integer> parent = new ArrayList<>();
+    List<Integer> size = new ArrayList<>();
     public DisjointSet(int n){
         for(int i = 0; i < n; i++){
             rank.add(0);
             parent.add(i);
+            size.add(1);
         }
     }
 
@@ -193,9 +195,48 @@ class DisjointSet{
     }
 
     public void unionByRank(int u, int v){
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
 
+        if(ulp_u == ulp_v) return;
+
+        if(rank.get(ulp_u) < rank.get(ulp_v)){
+            parent.set(ulp_u, ulp_v);
+        }
+        else if(rank.get(ulp_v) < rank.get(ulp_u)){
+            parent.set(ulp_v, ulp_u);
+        }
+        else{
+            parent.set(ulp_v, ulp_u);
+            rank.set(ulp_u, rank.get(ulp_u) + 1);
+        }
     }
 
+    public void unionBySize(int u, int v){
+        int ulp_u = findUPar(u);
+        int ulp_v = findUPar(v);
+        if(ulp_u == ulp_v) return;
+
+        if(size.get(ulp_u) < size.get(ulp_v)){
+            parent.set(ulp_u, ulp_v);
+            size.set(ulp_v, size.get(ulp_v) + size.get(ulp_u));
+        }
+        else{
+            parent.set(ulp_v, ulp_u);
+            size.set(ulp_u, size.get(ulp_u) + size.get(ulp_v));
+        }
+        System.out.println(parent + "\n" + size + "\n");
+    }
+}
+
+class EdgeKruskal implements Comparable<EdgeKruskal>{
+    int src, dest, weight;
+    EdgeKruskal(int _src, int _dest, int _wt){
+        this.src = _src; this.dest = _dest; this.weight = _wt;
+    }
+    public int compareTo(EdgeKruskal compareEdge){
+        return this.weight - compareEdge.weight;
+    }
 }
 
 public class GraphsPractise {
@@ -387,6 +428,114 @@ public class GraphsPractise {
 //        };
 //        numberOfDistinctIslands(grid);
 //        numberOfDistinctIslandsBFS(grid);
+
+//        DisjointSet ds = new DisjointSet(8);
+//        ds.unionBySize(1,2);
+//        ds.unionBySize(2,3);
+//        ds.unionBySize(4,5);
+//        ds.unionBySize(6,7);
+//        ds.unionBySize(5,6);
+//
+//        if(ds.findUPar(3) == ds.findUPar(7)){
+//            print("Same");
+//        }
+//        else{
+//            print("No Same");
+//        }
+//        ds.unionBySize(3, 7);
+//        if(ds.findUPar(3) == ds.findUPar(7)){
+//            print("Same");
+//        }
+//        else{
+//            print("No Same");
+//        }
+
+//        int[][] adjGraph = {{0,1,5},{1,2,3},{0,2,1}};
+//        kruskalAlgoSpanningTree(3, adjGraph);
+
+//        int[][] edges = {{1,0,1},{0,1,0},{1,0,1}};
+//        numberOfProvincesDisjoinSet(edges, 3);
+        int n = 4, m = 3;
+        int[][] edges = {{0,1},{0,2},{1,2}};
+        print(minimumOperationsNeededToMakeNetworkConnected(n,  m, edges));
+
+    }
+
+    public static int minimumOperationsNeededToMakeNetworkConnected(int n, int m, int[][] edges){
+        DisjointSet ds = new DisjointSet(n);
+        int cntExtras = 0;
+        for(int i = 0; i < m; i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+            if(ds.findUPar(u) == ds.findUPar(v)){
+                cntExtras++;
+            }
+            else{
+                ds.unionBySize(u, v);
+            }
+        }
+        int cntC = 0;
+        for(int i = 0; i < n; i++){
+            if(ds.parent.get(i) == i){
+                cntC++;
+            }
+        }
+        int ans = cntC - 1;
+        if(cntExtras >= ans){
+            return ans;
+        }
+        return -1;
+    }
+
+    public static void numberOfProvincesDisjoinSet(int[][] edges, int v){
+        ArrayList<ArrayList<Integer>> graph = new ArrayList<>();
+
+        for(int i = 0; i < v; i++){
+            graph.add(new ArrayList<>());
+        }
+        for(int i = 0; i < edges.length; i++){
+            for(int j = 0; j < edges[0].length; j++){
+                if(edges[i][j] == 1 && i != j){
+                    graph.get(i).add(j);
+                }
+            }
+        }
+        DisjointSet ds = new DisjointSet(v);
+        for(int i = 0; i < v; i++){
+            for(int neighbor : graph.get(i)){
+                ds.unionBySize(i, neighbor);
+            }
+        }
+        int cnt = 0;
+        for(int i = 0; i < v; i++){
+            if(ds.findUPar(i) == i){
+                cnt++;
+            }
+        }
+        print(cnt);
+    }
+
+    public static void kruskalAlgoSpanningTree(int n, int[][] edges){
+        List<EdgeKruskal> edgeList = new ArrayList<>();
+        for(int i = 0; i < edges.length; i++){
+            int u = edges[i][0];
+            int v = edges[i][1];
+            int w = edges[i][2];
+            edgeList.add(new EdgeKruskal(u, v, w));
+        }
+        Collections.sort(edgeList);
+        DisjointSet ds = new DisjointSet(n);
+        int mstWt = 0;
+        for(EdgeKruskal edge : edgeList){
+            int u = edge.src;
+            int v = edge.dest;
+            int w = edge.weight;
+            if(ds.findUPar(u) != ds.findUPar(v)){
+                mstWt += w;
+                ds.unionBySize(u, v);
+            }
+        }
+        print(mstWt);
     }
 
     public static void minimumSpanningTree(int n, int[][] edges){
