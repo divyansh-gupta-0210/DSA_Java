@@ -455,10 +455,193 @@ public class GraphsPractise {
 
 //        int[][] edges = {{1,0,1},{0,1,0},{1,0,1}};
 //        numberOfProvincesDisjoinSet(edges, 3);
-        int n = 4, m = 3;
-        int[][] edges = {{0,1},{0,2},{1,2}};
-        print(minimumOperationsNeededToMakeNetworkConnected(n,  m, edges));
+//        int n = 4, m = 3;
+//        int[][] edges = {{0,1},{0,2},{1,2}};
+//        print(minimumOperationsNeededToMakeNetworkConnected(n,  m, edges));
 
+//        List<List<String>> accounts = Arrays.asList(
+//                Arrays.asList("John", "johnsmith@mail.com", "john_newyork@mail.com"),
+//                Arrays.asList("John", "johnsmith@mail.com", "john00@mail.com"),
+//                Arrays.asList("Mary", "mary@mail.com"),
+//                Arrays.asList("John", "johnnybravo@mail.com"),
+//                Arrays.asList("Raj", "raj123@mail.com", "raj_new@mail.com"),
+//                Arrays.asList("Raj", "raj_new@mail.com", "raj007@mail.com"),
+//                Arrays.asList("Alice", "alice@mail.com", "alice_work@mail.com"),
+//                Arrays.asList("Alice", "alice_work@mail.com", "alice_home@mail.com"),
+//                Arrays.asList("Bob", "bob@mail.com"),
+//                Arrays.asList("Bob", "bob@mail.com", "bob123@mail.com")
+//        );
+//        accountsMerge(accounts);
+
+//        int[][] edges = {{0,0},{0,0},{1,1},{1,0},{0,1},{0,3},{1,3},{0,4},{3,2},{2,2},{1,2},{0,2}};
+//        int n = 4, m = 5;
+//        onlineQueries(n, m, edges);
+
+//         int[][] matrix = {
+//                 {1,1,0,1,1},
+//                 {1,1,0,1,1},
+//                 {0,0,1,0,0},
+//                 {0,0,1,1,1},
+//                 {0,0,1,1,1}
+//         };
+//         int n = matrix.length, m = matrix[0].length;
+//         largestIsland(n, m, matrix);
+
+        int[][] stonesPresentIn = {{0,0},{0,1},{1,0},{1,2},{2,1},{2,2}};
+        mostStonesRemoved(stonesPresentIn);
+    }
+
+    public static void mostStonesRemoved(int[][] edges){
+        int maxRow = 0;
+        int maxCol = 0;
+        for(int i = 0; i < edges.length; i++){
+            maxRow = Math.max(maxRow, edges[i][0]);
+            maxCol = Math.max(maxCol, edges[i][1]);
+        }
+        DisjointSet ds = new DisjointSet(maxRow + maxCol + 2);
+        HashMap<Integer, Integer> stones = new HashMap<>();
+        for(int i = 0; i < edges.length; i++){
+            int nodeRow = edges[i][0];
+            int nodeCol = edges[i][1] + maxRow + 1;
+            ds.unionBySize(nodeRow, nodeCol);
+            stones.put(nodeRow, 1);
+            stones.put(nodeCol, 1);
+        }
+        int cnt = 0;
+        for(Map.Entry<Integer, Integer> it : stones.entrySet()){
+            if(ds.findUPar(it.getKey()) == it.getKey()){
+                cnt++;
+            }
+        }
+        print(edges.length - cnt);
+    }
+
+    public static void largestIsland(int n, int m, int[][] matrix){
+        DisjointSet ds = new DisjointSet(n * m);
+        for(int i = 0; i < n; i++){
+            for(int j = 0; j < m; j++){
+                if(matrix[i][j] == 0){
+                    continue;
+                }
+                int[] dr = {-1,0,1,0};
+                int[] dc = {0,-1,0,1};
+                for(int ind = 0; ind < 4; ind++){
+                    int newR = i + dr[ind];
+                    int newC = j + dc[ind];
+                    if(newR >= 0 && newC >= 0 && newR < n && newC < n && matrix[newR][newC] == 1){
+                        int nodeNo = i * m + j;
+                        int adjNode = newR * n + newC;
+                        ds.unionBySize(nodeNo, adjNode);
+                    }
+                }
+            }
+        }
+
+        int max = 0;
+        for(int row = 0; row < n; row++){
+            for(int col = 0; col < n; col++){
+                if(matrix[row][col] == 1) continue;
+                int[] dr = {-1,0,1,0};
+                int[] dc = {0,-1,0,1};
+                HashSet<Integer> components = new HashSet<>();
+                for(int ind = 0; ind < 4; ind++) {
+                    int newR = row + dr[ind];
+                    int newC = col + dc[ind];
+                    if(newR >= 0 && newC >= 0 && newR < n && newC < n){
+                        if(matrix[newR][newC] == 1){
+                            components.add(ds.findUPar(newR * n + newC));
+                        }
+                    }
+                }
+                int sizeTotal = 0;
+                for(Integer parents : components){
+                    sizeTotal += ds.size.get(parents);
+                }
+                max = Math.max(max, sizeTotal + 1);
+            }
+        }
+        for(int cellNo = 0; cellNo < n * n; cellNo++){
+            max = Math.max(max, ds.size.get(ds.findUPar(cellNo)));
+        }
+        print(max);
+    }
+
+    public static void onlineQueries(int n, int m, int[][] edges){
+        DisjointSet ds = new DisjointSet(n*m);
+        int[][] vis = new int[n][m];
+        int cnt = 0;
+        List<Integer> ans = new ArrayList<>();
+        int len = edges.length;
+        int[] dr = {-1, 0, 1, 0};
+        int[] dc = {0, 1, 0, -1};
+        for(int i = 0; i < len; i++){
+            int row = edges[i][0];
+            int col = edges[i][1];
+            if(vis[row][col] == 1){
+                ans.add(cnt);
+                continue;
+            }
+            vis[row][col] = 1;
+            cnt++;
+            for(int ind = 0; ind < 4; ind++){
+                int adjR = row + dr[ind];
+                int adjC = col + dc[ind];
+                if(adjR >= 0 && adjC >= 0 && adjR < n && adjC < m){
+                    if(vis[adjR][adjC] == 1){
+                        int nodeNo = row * m + col;
+                        int adjNodeNo = adjR * m + adjC;
+                        if(ds.findUPar(nodeNo) != ds.findUPar(adjNodeNo)){
+                            cnt--;
+                            ds.unionBySize(nodeNo, adjNodeNo);
+                        }
+                    }
+                }
+            }
+            ans.add(cnt);
+        }
+        print(ans);
+    }
+
+    public static void accountsMerge(List<List<String>> accts){
+        int n = accts.size();
+        DisjointSet ds = new DisjointSet(n);
+        HashMap<String, Integer> mapMailNode = new HashMap<>();
+        for(int i = 0; i < n; i++){
+            for(int j = 1; j < accts.get(i).size(); j++){
+                String mail = accts.get(i).get(j);
+                if(!mapMailNode.containsKey(mail)){
+                    mapMailNode.put(mail, i);
+                }
+                else{
+                    ds.unionBySize(i, mapMailNode.get(mail));
+                }
+            }
+        }
+
+        ArrayList<String>[] mergedMail = new ArrayList[n];
+        for(int i = 0; i < n; i++){
+            mergedMail[i] = new ArrayList<>();
+        }
+        for(Map.Entry<String, Integer> it : mapMailNode.entrySet()){
+            String mail = it.getKey();
+            int node = ds.findUPar(it.getValue());
+            mergedMail[node].add(mail);
+        }
+
+        List<List<String>> ans = new ArrayList<>();
+        for(int i = 0; i < n; i++){
+            if(mergedMail[i].isEmpty()){
+                continue;
+            }
+            Collections.sort(mergedMail[i]);
+            List<String> temp = new ArrayList<>();
+            temp.add(accts.get(i).get(0));
+            for(String it : mergedMail[i]){
+                temp.add(it);
+            }
+            ans.add(temp);
+        }
+        print(ans);
     }
 
     public static int minimumOperationsNeededToMakeNetworkConnected(int n, int m, int[][] edges){
