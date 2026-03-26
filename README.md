@@ -23,7 +23,6 @@ This project provides:
 - ✅ Clean, well-commented Java implementations
 - ✅ Multiple sorting and searching algorithms
 - ✅ Data structure implementations (Arrays, LinkedLists, Trees)
-- ✅ Comprehensive unit tests
 - ✅ Time & space complexity analysis
 - ✅ Real-world use cases and examples
 
