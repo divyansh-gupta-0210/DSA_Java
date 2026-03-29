@@ -19,7 +19,7 @@ public class LockReentrantLock {
             System.out.println(Thread.currentThread().getName() + " released the lock");
             lock.unlock();
         }
-    }
+     }
     public int getCounter(){
         return counter;
     }

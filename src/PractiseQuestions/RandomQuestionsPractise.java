@@ -32,9 +32,32 @@ public class RandomQuestionsPractise {
 //        int m = 5, n = 3;
 //        System.out.println("Total squares in " + m + "x" + n + ": " + countSquares(m, n));
         ArrayList<Integer> arr = new ArrayList<>();
-        arr.add(2);arr.add(-3);
-        arr.add(4);arr.add(6);arr.add(1);
-        print(gainMaxValue(arr, 2));
+//        arr.add(2);arr.add(-3);
+//        arr.add(4);arr.add(6);arr.add(1);
+//        print(gainMaxValue(arr, 2));
+        arr.add(1);arr.add(3);arr.add(5);arr.add(7);
+        print(maxRequestInWindow(arr, 4));
+
+    }
+
+    public static int maxRequestInWindow(List<Integer> timestamp, int windowSize) {
+        Collections.sort(timestamp);
+
+        int left = 0;
+        int maxCount = 0;
+
+        // Step 2: Sliding window
+        for (int right = 0; right < timestamp.size(); right++) {
+
+            // Maintain strict window size
+            while (timestamp.get(right) - timestamp.get(left) >= windowSize) {
+                left++;
+            }
+
+            maxCount = Math.max(maxCount, right - left + 1);
+        }
+
+        return maxCount;
     }
 
     public static int gainMaxValue(List<Integer> game_val, int k) {
