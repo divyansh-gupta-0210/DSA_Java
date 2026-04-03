@@ -1,5 +1,6 @@
 package PractiseQuestions;
 
+import javax.naming.InsufficientResourcesException;
 import java.util.Arrays;
 
 public class DynamicProgrammingPractise {
@@ -125,8 +126,195 @@ public class DynamicProgrammingPractise {
 //        int diff = 3;
 //        print(countNumberOfPartitionsWithDifference(arr, diff));
 
+//        int[] wt = {3,2,5};
+//        int[] val = {30, 40, 60};
+//        int bgWt = 6;
+//        int[][] dp = new int[wt.length][bgWt + 1];
+//        for(int i = 0; i < wt.length; i++){
+//            Arrays.fill(dp[i], 0);
+//        }
+//        print(knapsack(wt, val, bgWt, wt.length - 1, dp));
+
+//        int[] arr = {1, 2, 3};
+//        int target = 7;
+//        int[][] dp = new int[arr.length][target + 1];
+//        for(int i = 0; i < arr.length; i++){
+//            Arrays.fill(dp[i], 0);
+//        }
+//        print(minimumCoins(arr, dp, arr.length - 1, target));
+
+//        int[] arr = {1, 2, 3, 1};
+//        int target = 3;
+//        print(targetSum(arr, target));
+
+        int[] arr = {1, 2, 3};
+        int target = 4;
+        int[][] dp = new int[arr.length][target + 1];
+        for(int i = 0; i < arr.length; i++){
+            Arrays.fill(dp[i], 0);
+        }
+        print(minimumCoinsProvidedAnyElementCanBeUsedAnyNumberOfTimes(arr, dp, arr.length - 1, target));
+    }
+
+    public static int minimumCoinsProvidedAnyElementCanBeUsedAnyNumberOfTimes(int[] arr, int[][] dp, int ind, int target){
+
+//       Space Optimization
+        int[] prev = new int[target + 1];
+
+        for(int i = 0; i <= target; i++){
+            prev[i] = (i%arr[0] == 0) ? 1 : 0;
+        }
+
+        for(int i = 1; i < arr.length; i++){
+            int[] curr = new int[target + 1];
+            for(int j = 0; j <= target; j++){
+                int notTake = prev[j];
+                int take = 0;
+                if(arr[i] <= j){
+                    take = curr[j - arr[i]];
+                }
+                curr[j] = take + notTake;
+            }
+            prev = curr;
+        }
+        return prev[target];
+
+//        Tabulation
+//        for(int i = 0; i <= target; i++){
+//            dp[0][i] = (i%arr[0] == 0) ? 1 : 0;
+//        }
+//
+//        for(int i = 1; i < arr.length; i++){
+//            for(int j = 0; j <= target; j++){
+//                int notTake = dp[i-1][j];
+//                int take = 0;
+//                if(arr[i] <= j){
+//                    take = dp[i][j - arr[i]];
+//                }
+//                dp[i][j] = take + notTake;
+//            }
+//        }
+//        return dp[arr.length - 1][target];
 
 
+//        Brute and Better
+//        if(ind == 0){
+//            return target % arr[ind] == 0 ? 1 : 0;
+//        }
+//        if(dp[ind][target] != -1){
+//            return dp[ind][target];
+//        }
+//        int notTake = minimumCoinsProvidedAnyElementCanBeUsedAnyNumberOfTimes(arr, dp, ind-1, target);
+//        int take = 0;
+//        if(arr[ind] <= target){
+//            take = minimumCoinsProvidedAnyElementCanBeUsedAnyNumberOfTimes(arr, dp, ind, target - arr[ind]);
+//        }
+//        return dp[ind][target] = take + notTake;
+    }
+
+    public static int targetSum(int[] arr, int target){
+        return countNumberOfPartitionsWithDifference(arr, target);
+    }
+
+    public static int minimumCoins(int[] arr, int[][] dp, int ind, int target){
+
+//        Tabulation
+        int[] prev = new int[target + 1];
+        for(int t = 0; t <= target; t++){
+            if(t % arr[0] == 0){
+                prev[t] = t / arr[0];
+            }
+            else{
+                prev[t] = (int)(1e9);
+            }
+        }
+
+        for(int i = 1; i < arr.length; i++){
+            int[] curr = new int[target + 1];
+            for(int j = 0; j <= target; j++){
+                int notTake = prev[j];
+                int take = (int)1e9;
+                if(arr[i] <= j){
+                    take = 1 + curr[j - arr[i]];
+                }
+                curr[j] = Math.min(take, notTake);
+            }
+            prev = curr;
+        }
+        if(prev[target] >= (int)1e9){
+            return -1;
+        }
+        return prev[target];
+
+//        if(ind == 0){
+//            return target % arr[ind] == 0 ? target / arr[ind] : (int)1e9;
+//        }
+//        if(dp[ind][target] != -1){
+//            return dp[ind][target];
+//        }
+//        int notTake = minimumCoins(arr, dp, ind - 1, target);
+//        int take = (int)1e9;
+//        if(arr[ind] <= target){
+//            take = 1 + minimumCoins(arr, dp, ind, target - arr[ind]);
+//        }
+//        return dp[ind][target] = Math.min(take, notTake);
+    }
+
+    public static int knapsack(int[] weight, int[] value, int bagWeight, int ind, int[][] dp){
+
+//        Space optimization
+        int[] prev = new int[bagWeight + 1];
+        for(int i = weight[0]; i <= bagWeight; i++){
+            prev[i] = value[0];
+        }
+        for(int i = 1; i < weight.length; i++){
+
+//            for(int w = 0; w <= bagWeight; w++){
+            for(int w = bagWeight; w >= 0; w--){
+                int notTake = prev[w];
+                int take = Integer.MIN_VALUE;
+                if(weight[i] <= w){
+                    take = value[i] + prev[w - weight[i]];
+                }
+                prev[w] = Math.max(notTake, take);
+            }
+        }
+        return prev[bagWeight];
+
+//        Tabulation
+//        for(int i = weight[0]; i <= bagWeight; i++){
+//            dp[0][i] = value[0];
+//        }
+//        for(int i = 1; i < weight.length; i++){
+//            for(int w = 0; w <= bagWeight; w++){
+//                int notTake = dp[i-1][w];
+//                int take = Integer.MIN_VALUE;
+//                if(weight[i] <= w){
+//                    take = value[i] + dp[i-1][w - weight[i]];
+//                }
+//                dp[i][w] = Math.max(notTake, take);
+//            }
+//        }
+//        return dp[weight.length - 1][bagWeight];
+
+//        Brute + Better
+//        if(ind == 0){
+//            if(weight[ind] <= bagWeight){
+//                return value[ind];
+//            }
+//            else{
+//                return 0;
+//            }
+//        }
+//        if(dp[ind][bagWeight]!=-1){
+//            return dp[ind][bagWeight];
+//        }
+//        int notTake = knapsack(weight, value, bagWeight, ind - 1, dp);
+//        int take = Integer.MIN_VALUE;
+//        if(weight[ind] <= bagWeight){
+//            take = value[ind] + knapsack(weight, value, bagWeight - weight[ind], ind - 1, dp);
+//        }
+//        return dp[ind][bagWeight] = Math.max(notTake, take);
     }
 
     public static int countNumberOfPartitionsWithDifference(int[] arr, int diff){
@@ -148,47 +336,47 @@ public class DynamicProgrammingPractise {
     public static int countNumberOfSubsetsWithSumK(int[] arr, int[][] dp, int ind, int sum){
 
 //        Space Optimization
-//        int[] prev = new int[sum+1];
-//        prev[0] = 1;
-//        if(arr[0] <= sum){
-//            prev[arr[0]] = 1;
-//        }
-//        for(int i = 1; i < arr.length; i++){
-//            int[] curr = new int[sum + 1];
-//            for(int j = 0; j <= sum; j++){
-//                int notPick = prev[sum];
-//                int pick = 0;
-//                if(arr[ind] <= j){
-//                    pick = prev[sum - arr[i]];
-//                }
-//                curr[j] = pick + notPick;
-//            }
-//            prev = curr;
-//        }
-//        return prev[sum];
+        int[] prev = new int[sum+1];
+        prev[0] = 1;
+        if(arr[0] <= sum){
+            prev[arr[0]] = 1;
+        }
+        for(int i = 1; i < arr.length; i++){
+            int[] curr = new int[sum + 1];
+            for(int j = 0; j <= sum; j++){
+                int notPick = prev[j];
+                int pick = 0;
+                if(arr[i] <= j){
+                    pick = prev[j - arr[i]];
+                }
+                curr[j] = pick + notPick;
+            }
+            prev = curr;
+        }
+        return prev[sum];
 
 //        Tabulation
-        if(arr[0] == 0) {
-            dp[0][0] = 2;
-        }
-        else{
-            dp[0][0] = 1;
-        }
-        if(arr[0] != 0 && arr[0] <= sum){
-            dp[0][arr[0]] = 1;
-        }
-
-        for(int i = 1; i < arr.length; i++){
-            for(int j = 0; j <= sum; j++){
-                int notPick = dp[i-1][j];
-                int pick = 0;
-                if(arr[ind] <= j){
-                    pick = dp[i-1][sum - arr[i]];
-                }
-                dp[i][j] = pick + notPick;
-            }
-        }
-        return dp[arr.length-1][sum];
+//        if(arr[0] == 0) {
+//            dp[0][0] = 2;
+//        }
+//        else{
+//            dp[0][0] = 1;
+//        }
+//        if(arr[0] != 0 && arr[0] <= sum){
+//            dp[0][arr[0]] = 1;
+//        }
+//
+//        for(int i = 1; i < arr.length; i++){
+//            for(int j = 0; j <= sum; j++){
+//                int notPick = dp[i-1][j];
+//                int pick = 0;
+//                if(arr[i] <= j){
+//                    pick = dp[i-1][j - arr[i]];
+//                }
+//                dp[i][j] = pick + notPick;
+//            }
+//        }
+//        return dp[arr.length-1][sum];
 
 //      Better and Brute
 
