@@ -75,45 +75,332 @@ public class DynamicProgrammingPractise {
 //        print(minimumMaximumFallingPathSum(grid, dp, grid.length - 1, grid[0].length - 1));
 //        System.out.println(max);
 
-        int[][] grid = {{2,3,1,2},{3,4,2,2},{5,6,3,5}};
-        int n = grid.length;
-        int m = grid[0].length;
+//        int[][] grid = {{2,3,1,2},{3,4,2,2},{5,6,3,5}};
+//        int n = grid.length;
+//        int m = grid[0].length;
+//
+//        int[][][] dp = new int[n][m][m];
+//        for (int i = 0; i < n; i++) {
+//            for (int j1 = 0; j1 < m; j1++) {
+//                Arrays.fill(dp[i][j1], -1);
+//            }
+//        }
+//        print(cherryPickUp(grid, dp /*, 0, 0, m - 1)*/));
 
-        int[][][] dp = new int[n][m][m];
-        for (int i = 0; i < n; i++) {
-            for (int j1 = 0; j1 < m; j1++) {
-                Arrays.fill(dp[i][j1], -1);
-            }
-        }
+//        int[] arr = {1, 2, 3, 4}; int target = 100;
+//        int[][] dp = new int[arr.length][target+1];
+//        for(int i = 0; i < arr.length; i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(subSetSumEqualsTarget(arr, dp, arr.length - 1, target));
 
-        System.out.println(cherryPickUp(grid, dp, 0, 0, m - 1));
+//        int[] arr = {2,3};
+//        int sum = 0;
+//        for (int num : arr) {
+//            sum += num;
+//        }
+//        if (sum % 2 != 0) {
+//            System.out.println(false);
+//            return;
+//        }
+//        int target = sum / 2;
+//        int[][] dp = new int[arr.length][target+1];
+//        for(int i = 0; i < arr.length; i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(canPartition(arr, target));
+
+//        int[] arr = {1,10,3};
+//        print(minSubsetSumDifference(arr, arr.length));
+
+//        int[] arr = {0,0,1};
+//        int sum = 1;
+//        int[][] dp = new int[arr.length][sum + 1];
+//        for(int i = 0; i < dp.length; i++) {
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(countNumberOfSubsetsWithSumK(arr, dp, arr.length - 1, sum));
+
+//        int[] arr = {5,2,6,4};
+//        int diff = 3;
+//        print(countNumberOfPartitionsWithDifference(arr, diff));
+
+
+
     }
 
-    public static int cherryPickUp(int[][] grid, int[][][] dp, int i, int j1, int j2){
-        int n = grid.length;
-        int m = grid[0].length;
-        if (j1 < 0 || j1 >= m || j2 < 0 || j2 >= m) {
-            return Integer.MIN_VALUE;
+    public static int countNumberOfPartitionsWithDifference(int[] arr, int diff){
+        int totalSum = 0;
+        for(int num : arr){
+            totalSum += num;
         }
-        if (i == n - 1) {
-            if (j1 == j2) return grid[i][j1];
-            else return grid[i][j1] + grid[i][j2];
+        if(totalSum - diff < 0 || (totalSum - diff) % 2 != 0){
+            return 0;
         }
-        if (dp[i][j1][j2] != -1) return dp[i][j1][j2];
-        int maxi = Integer.MIN_VALUE;
-        for (int dj1 = -1; dj1 <= 1; dj1++) {
-            for (int dj2 = -1; dj2 <= 1; dj2++) {
+        int sum = (totalSum - diff) / 2;
+        int[][] dp = new int[arr.length][sum + 1];
+        for(int i = 0; i < dp.length; i++){
+            Arrays.fill(dp[i], 0);
+        }
+        return countNumberOfSubsetsWithSumK(arr, dp,arr.length -1, sum);
+    }
 
-                int value;
-                if (j1 == j2) value = grid[i][j1];
-                else value = grid[i][j1] + grid[i][j2];
+    public static int countNumberOfSubsetsWithSumK(int[] arr, int[][] dp, int ind, int sum){
 
-                value += cherryPickUp(grid, dp, i + 1, j1 + dj1, j2 + dj2);
+//        Space Optimization
+//        int[] prev = new int[sum+1];
+//        prev[0] = 1;
+//        if(arr[0] <= sum){
+//            prev[arr[0]] = 1;
+//        }
+//        for(int i = 1; i < arr.length; i++){
+//            int[] curr = new int[sum + 1];
+//            for(int j = 0; j <= sum; j++){
+//                int notPick = prev[sum];
+//                int pick = 0;
+//                if(arr[ind] <= j){
+//                    pick = prev[sum - arr[i]];
+//                }
+//                curr[j] = pick + notPick;
+//            }
+//            prev = curr;
+//        }
+//        return prev[sum];
 
-                maxi = Math.max(maxi, value);
+//        Tabulation
+        if(arr[0] == 0) {
+            dp[0][0] = 2;
+        }
+        else{
+            dp[0][0] = 1;
+        }
+        if(arr[0] != 0 && arr[0] <= sum){
+            dp[0][arr[0]] = 1;
+        }
+
+        for(int i = 1; i < arr.length; i++){
+            for(int j = 0; j <= sum; j++){
+                int notPick = dp[i-1][j];
+                int pick = 0;
+                if(arr[ind] <= j){
+                    pick = dp[i-1][sum - arr[i]];
+                }
+                dp[i][j] = pick + notPick;
             }
         }
-        return dp[i][j1][j2] = maxi;
+        return dp[arr.length-1][sum];
+
+//      Better and Brute
+
+//        if(ind == 0){
+//            if(sum == 0 && arr[0] == 0){
+//                return 2;
+//            }
+//            if(sum == 0 || sum == arr[0]){
+//                return 1;
+//            }
+//            return 0;
+//        }
+//        if(dp[ind][sum] != -1){
+//            return dp[ind][sum];
+//        }
+//        int notPick = countNumberOfSubsetsWithSumK(arr, dp, ind-1, sum);
+//        int pick = 0;
+//        if(arr[ind] <= sum){
+//            pick = countNumberOfSubsetsWithSumK(arr, dp, ind-1, sum - arr[ind]);
+//        }
+//        return dp[ind][sum] = pick + notPick;
+    }
+
+    public static int minSubsetSumDifference(int[] arr, int n){
+        int totalSum = 0;
+
+        for(int i : arr) totalSum += i;
+
+        boolean[][] dp = new boolean[n][totalSum+1];
+        if(arr[0] <= totalSum){
+            dp[0][arr[0]] = true;
+        }
+
+        for(int i = 0; i < n; i++){
+            dp[i][0] = true;
+        }
+
+        for(int i = 1; i < n; i++){
+            for(int target = 1; target <= totalSum; target++){
+                boolean notTake = dp[i-1][target];
+                boolean take = false;
+                if(arr[i] <= target){
+                    take = dp[i-1][target - arr[i]];
+                }
+                dp[i][target] = take | notTake;
+            }
+        }
+        for(int i = 0; i < dp.length; i++){
+            print(Arrays.toString(dp[i]));
+        }
+
+        // dp[n-1][col -> 0... target]
+        int mini = (int)1e9;
+        for(int s1 = 0; s1 <= totalSum/2; s1++){
+            if(dp[n-1][s1]){
+                mini = Math.min(mini, Math.abs(totalSum - 2 * s1));
+            }
+        }
+        return mini;
+    }
+
+    public static boolean canPartition(int[] arr, int target) {
+        boolean[] prev = new boolean[target + 1];
+        prev[0] = true;
+        if (arr[0] <= target) {
+            prev[arr[0]] = true;
+        }
+        for (int i = 1; i < arr.length; i++) {
+            boolean[] curr = new boolean[target + 1];
+            curr[0] = true;
+            for (int tar = 1; tar <= target; tar++) {
+                boolean notTake = prev[tar];
+                boolean take = false;
+                if (arr[i] <= tar) {
+                    take = prev[tar - arr[i]];
+                }
+                curr[tar] = take || notTake;
+            }
+            prev = curr;
+        }
+        return prev[target];
+    }
+
+    public static boolean subSetSumEqualsTarget(int[] arr, int[][] dp, int ind, int target){
+
+//        Space optimization
+        boolean[] prev = new boolean[target+1];
+
+        prev[0] = true;
+        if (arr[0] <= target) {
+            prev[arr[0]] = true;
+        }
+        for(int i = 1; i < arr.length; i++){
+            boolean[] curr = new boolean[target + 1];
+            curr[0] = true;
+            for(int tar = 0; tar <= target; tar++){
+                boolean notTake = prev[tar];
+                boolean take = false;
+                if(arr[i] <= tar){
+                    take = prev[tar-arr[i]];
+                }
+                curr[tar] = take || notTake;
+            }
+            prev = curr;
+        }
+        return prev[target];
+
+//        Tabulation
+//        boolean[][] dpTabulation = new boolean[arr.length][target + 1];
+//        dpTabulation[0][arr[0]] = true;
+//
+//        for(int i = 1; i < arr.length; i++){
+//            for(int tar = 1; tar <= target; tar++){
+//                boolean notTake = dpTabulation[i-1][tar];
+//                boolean take = false;
+//                if(arr[i] <= tar){
+//                    take = dpTabulation[i-1][tar-arr[i]];
+//                }
+//                dpTabulation[i][tar] = take | notTake;
+//            }
+//        }
+//        for(int i = 0; i < dp.length; i++){
+//            print(Arrays.toString(arr));
+//            print(Arrays.toString(dpTabulation[i]));
+//        }
+//        return dpTabulation[arr.length-1][target];
+
+//        Brute and Better
+//        if(target == 0){
+//            return true;
+//        }
+//        if(ind == 0){
+//            return arr[0] == target;
+//        }
+//        if(dp[ind][target] != -1){
+//            return dp[ind][target] == 1;
+//        }
+//        boolean notTaken = subSetSumEqualsTarget(arr, dp, ind - 1, target);
+//        boolean taken = false;
+//        if(target >= arr[ind]){
+//            taken = subSetSumEqualsTarget(arr, dp, ind - 1, target - arr[ind]);
+//        }
+//        dp[ind][target] = (notTaken || taken) ? 1 : 0;
+//        return notTaken || taken;
+    }
+
+    public static int cherryPickUp(int[][] grid, int[][][] dp /*,int i, int j1, int j2*/){
+
+//        Tabulation
+        int n = grid.length;
+        int m = grid[0].length;
+
+        for (int j1 = 0; j1 < m; j1++) {
+            for (int j2 = 0; j2 < m; j2++) {
+                if (j1 == j2)
+                    dp[n - 1][j1][j2] = grid[n - 1][j1];
+                else
+                    dp[n - 1][j1][j2] = grid[n - 1][j1] + grid[n - 1][j2];
+            }
+        }
+
+        for (int i = n - 2; i >= 0; i--) {
+            for (int j1 = 0; j1 < m; j1++) {
+                for (int j2 = 0; j2 < m; j2++) {
+                    int maxi = 0;
+                    for (int dj1 = -1; dj1 <= 1; dj1++) {
+                        for (int dj2 = -1; dj2 <= 1; dj2++) {
+                            int value;
+                            if (j1 == j2)
+                                value = grid[i][j1];
+                            else
+                                value = grid[i][j1] + grid[i][j2];
+                            int newJ1 = j1 + dj1;
+                            int newJ2 = j2 + dj2;
+                            if (newJ1 >= 0 && newJ1 < m && newJ2 >= 0 && newJ2 < m)
+                                value += dp[i + 1][newJ1][newJ2];
+                            else
+                                value += -1e8;
+                            maxi = Math.max(maxi, value);
+                        }
+                    }
+                    dp[i][j1][j2] = maxi;
+                }
+            }
+        }
+        return dp[0][0][m - 1];
+
+//        Better and Brute
+//        int n = grid.length;
+//        int m = grid[0].length;
+//        if (j1 < 0 || j1 >= m || j2 < 0 || j2 >= m) {
+//            return Integer.MIN_VALUE;
+//        }
+//        if (i == n - 1) {
+//            if (j1 == j2) return grid[i][j1];
+//            else return grid[i][j1] + grid[i][j2];
+//        }
+//        if (dp[i][j1][j2] != -1) return dp[i][j1][j2];
+//        int maxi = Integer.MIN_VALUE;
+//        for (int dj1 = -1; dj1 <= 1; dj1++) {
+//            for (int dj2 = -1; dj2 <= 1; dj2++) {
+//
+//                int value;
+//                if (j1 == j2) value = grid[i][j1];
+//                else value = grid[i][j1] + grid[i][j2];
+//
+//                value += cherryPickUp(grid, dp, i + 1, j1 + dj1, j2 + dj2);
+//
+//                maxi = Math.max(maxi, value);
+//            }
+//        }
+//        return dp[i][j1][j2] = maxi;
     }
 
     public static int minimumMaximumFallingPathSum(int[][] grid, int[][] dp, int row, int col){
