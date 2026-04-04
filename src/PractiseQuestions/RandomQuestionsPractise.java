@@ -35,9 +35,84 @@ public class RandomQuestionsPractise {
 //        arr.add(2);arr.add(-3);
 //        arr.add(4);arr.add(6);arr.add(1);
 //        print(gainMaxValue(arr, 2));
-        arr.add(1);arr.add(3);arr.add(5);arr.add(7);
-        print(maxRequestInWindow(arr, 4));
+       arr.add(4);arr.add(-8);arr.add(2);arr.add(-10);arr.add(3);arr.add(-20);
+        print(getMaximumGrossValue(arr));
 
+    }
+
+    public static long getMaximumGrossValue(List<Integer> arr) {
+        int n = arr.size();
+
+        // Prefix sum
+        long[] P = new long[n + 1];
+        for (int i = 1; i <= n; i++) {
+            P[i] = P[i - 1] + arr.get(i - 1);
+        }
+
+        long ans = Long.MIN_VALUE;
+
+        for (int i2 = 1; i2 <= n; i2++) {
+
+            // best i1 ≤ i2
+            long bestLeft = Long.MIN_VALUE;
+            for (int i1 = 1; i1 <= i2; i1++) {
+                bestLeft = Math.max(bestLeft, P[i1 - 1]);
+            }
+
+            // try all i3 ≥ i2
+            for (int i3 = i2; i3 <= n + 1; i3++) {
+                long right = (i3 == n + 1) ? P[n] : P[i3 - 1];
+
+                long value = bestLeft - P[i2 - 1] + right;
+                ans = Math.max(ans, value);
+            }
+        }
+
+        return 2 * ans - P[n];
+    }
+
+    public static int getResponseTimeSum(List<Integer> responseTime) {
+        int n = responseTime.size();
+        long mod = 1_000_000_007;
+
+        int[] left = new int[n];
+        int[] right = new int[n];
+
+        Stack<Integer> stack = new Stack<>();
+
+        for (int i = 0; i < n; i++) {
+            while (!stack.isEmpty() && responseTime.get(stack.peek()) <= responseTime.get(i)) {
+                stack.pop();
+            }
+            left[i] = stack.isEmpty() ? i + 1 : i - stack.peek();
+            stack.push(i);
+        }
+
+        stack.clear();
+        for (int i = n - 1; i >= 0; i--) {
+            while (!stack.isEmpty() && responseTime.get(stack.peek()) < responseTime.get(i)) {
+                stack.pop();
+            }
+            right[i] = stack.isEmpty() ? n - i : stack.peek() - i;
+            stack.push(i);
+        }
+
+        long result = 0;
+
+        for (int i = 0; i < n; i++) {
+            long L = left[i];
+            long R = right[i];
+            long val = responseTime.get(i);
+
+            long sumL = L * (L + 1) / 2 % mod;
+            long sumR = R * (R + 1) / 2 % mod;
+
+            long contribution = (R * sumL % mod + L * sumR % mod - L * R % mod + mod) % mod;
+
+            result = (result + val * contribution % mod) % mod;
+        }
+
+        return (int) result;
     }
 
     public static int maxRequestInWindow(List<Integer> timestamp, int windowSize) {

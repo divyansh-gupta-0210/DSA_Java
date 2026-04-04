@@ -147,13 +147,375 @@ public class DynamicProgrammingPractise {
 //        int target = 3;
 //        print(targetSum(arr, target));
 
-        int[] arr = {1, 2, 3};
-        int target = 4;
-        int[][] dp = new int[arr.length][target + 1];
-        for(int i = 0; i < arr.length; i++){
+//        int[] arr = {1, 2, 3};
+//        int target = 4;
+//        int[][] dp = new int[arr.length][target + 1];
+//        for(int i = 0; i < arr.length; i++){
+//            Arrays.fill(dp[i], 0);
+//        }
+//        print(minimumCoinsProvidedAnyElementCanBeUsedAnyNumberOfTimes(arr, dp, arr.length - 1, target));
+
+//        int[] wt = {2,4,6};
+//        int[] val = {5,11,13};
+//        int bgWt = 10;
+//        int[][] dp = new int[wt.length][bgWt + 1];
+//        for(int i = 0; i < wt.length; i++){
+//            Arrays.fill(dp[i], 0);
+//        }
+//        print(unboundedKnapsack(wt, val, bgWt, wt.length - 1, dp));
+
+//        int[] price = {2,5,7,8,10};
+//        int rodLength = 5;
+//        int[][] dp = new int[price.length][rodLength + 1];
+//        for(int i = 0; i < price.length; i++){
+//            Arrays.fill(dp[i], 0);
+//        }
+//        print(rodCutting(price, dp, price.length - 1, rodLength));
+
+//        String s1 = "adcdc";
+//        String s2 = "dcadb";
+//        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i < s1.length(); i++){
+//            Arrays.fill(dp[i], 0);
+//        }
+//        print(longestCommonSubsequence(s1, s2, s1.length()-1, s2.length()-1, dp));
+
+//        String s1 = "abcde";
+//        String s2 = "bdgek";
+//        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i < s1.length(); i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(printLongestCommonSubsequence(s1, s2, s1.length()-1, s2.length()-1, dp));
+
+//        String s1 = "abcjklp";
+//        String s2 = "acjkp";
+//        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i < s1.length(); i++){
+//            Arrays.fill(dp[i], 0);
+//        }
+//        print(printLongestCommonSubstring(s1, s2, dp));
+
+//        String s1 = "bbabcbcab";
+//        String s2 = reverseString(s1);
+//        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i <= s1.length(); i++){
+//            Arrays.fill(dp[i], 0);
+//        }
+//        print(longestPalindromicSubsequence(s1, s2, dp));
+
+//        String s = "codingninjas";
+//        print(minimumInsertionsToMakeStringPalindrome(s));
+
+//        String str1 = "abcd";
+//        String str2 = "anc";
+//        print(minimumNumberOfInsertionsAndDeletionNeededToConvertS1toS2(str1, str2));
+
+        String s1 = "brute";
+        String s2 = "groot";
+        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+        for(int i = 0; i < s1.length(); i++){
+            Arrays.fill(dp[i], -1);
+        }
+        print(shortestCommonSuperSequence(s1, s2, dp));
+    }
+
+    public static String shortestCommonSuperSequence(String s1, String s2, int[][] dp){
+        for(int j = 0; j <= s2.length(); j++){
+            dp[0][j] = 0;
+        }
+        for(int i = 0; i <= s1.length(); i++){
+            dp[i][0] = 0;
+        }
+        for(int i = 1; i <= s1.length(); i++){
+            for(int j = 1; j <= s2.length(); j++){
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+                    dp[i][j] = 1 + dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+                }
+            }
+        }
+        String ans = "";
+        int i = s1.length(); int j = s2.length();
+        while(i > 0 && j > 0){
+            if(s1.charAt(i-1) == s2.charAt(j-1)){
+                ans+= s1.charAt(i-1);
+                i--; j--;
+            }
+            else if(dp[i-1][j] > dp[i][j-1]){
+                ans += s1.charAt(i-1);
+                i--;
+            }
+            else{
+                ans += s2.charAt(j-1);
+                j--;
+            }
+        }
+        while(i > 0){
+            ans += s1.charAt(i-1);
+            i--;
+        }
+        while(j > 0){
+            ans += s2.charAt(j-1);
+            j--;
+        }
+        return reverseString(ans);
+    }
+
+    public static int minimumNumberOfInsertionsAndDeletionNeededToConvertS1toS2(String s1, String s2){
+        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+        for(int i = 0; i < s1.length(); i++){
             Arrays.fill(dp[i], 0);
         }
-        print(minimumCoinsProvidedAnyElementCanBeUsedAnyNumberOfTimes(arr, dp, arr.length - 1, target));
+        return s1.length() + s2.length() - 2 * longestCommonSubsequence(s1, s2, s1.length()-1, s2.length()-1, dp);
+    }
+
+    public static int minimumInsertionsToMakeStringPalindrome(String s1){
+        String s2 = reverseString(s1);
+        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+        for(int i = 0; i <= s1.length(); i++){
+            Arrays.fill(dp[i], 0);
+        }
+        return s1.length() - longestPalindromicSubsequence(s1, s2, dp);
+    }
+
+    public static String reverseString(String s){
+        String rev = "";
+        for(int i = s.length() - 1; i >= 0; i--){
+            rev += s.charAt(i);
+        }
+        return rev;
+    }
+
+    public static int longestPalindromicSubsequence(String s1, String s2, int[][] dp){
+        for(int j = 0; j <= s2.length(); j++){
+            dp[0][j] = 0;
+        }
+        for(int i = 0; i <= s1.length(); i++){
+            dp[i][0] = 0;
+        }
+        for(int i = 1; i <= s1.length(); i++){
+            for(int j = 1; j <= s2.length(); j++){
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+                    dp[i][j] = 1 + dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+                }
+            }
+        }
+
+        return dp[s1.length()][s2.length()];
+    }
+
+    public static int printLongestCommonSubstring(String s1, String s2, int[][] dp){
+        for(int j = 0; j <= s2.length(); j++){
+            dp[0][j] = 0;
+        }
+        for(int i = 0; i <= s1.length(); i++){
+            dp[i][0] = 0;
+        }
+        int ans = 0;
+        for(int i = 1; i <= s1.length(); i++){
+            for(int j = 1; j <= s2.length(); j++){
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+                    dp[i][j] = 1 + dp[i-1][j-1];
+                    ans = Math.max(dp[i][j], ans);
+                }
+                else{
+                    dp[i][j] = 0;
+                }
+            }
+        }
+
+        return ans;
+    }
+
+    public static String printLongestCommonSubsequence(String s1, String s2, int ind1, int ind2, int[][] dp){
+        for(int j = 0; j <= s2.length(); j++){
+            dp[0][j] = 0;
+        }
+        for(int i = 0; i <= s1.length(); i++){
+            dp[i][0] = 0;
+        }
+        for(int i = 1; i <= s1.length(); i++){
+            for(int j = 1; j <= s2.length(); j++){
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+                    dp[i][j] = 1 + dp[i-1][j-1];
+                }
+                else{
+                    dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+                }
+            }
+        }
+        int len = dp[s1.length()][s2.length()];
+        StringBuilder ans = new StringBuilder();
+
+        for(int i = 0; i < len; i++){
+            ans.append("$");
+        }
+        int index = len - 1;
+        int i = s1.length(); int j = s2.length();
+        while(i>0 && j >0){
+            if(s1.charAt(i-1) == s2.charAt(j-1)){
+                ans.setCharAt(index, s1.charAt(i-1));
+                index--;
+                i--;
+                j--;
+            }
+            else if(dp[i-1][j] > dp[i][j-1]){
+                i--;
+            }
+            else{
+                j--;
+            }
+        }
+        return ans.toString();
+    }
+
+        public static int longestCommonSubsequence(String s1, String s2, int ind1, int ind2, int[][] dp){
+
+//      Space Optimization
+        int[] prev = new int[s1.length() + 1];
+        for(int j = 0; j <= s2.length(); j++){
+            prev[j] = 0;
+        }
+        for(int i = 1; i <= s1.length(); i++){
+            int[] curr = new int[s2.length() + 1];
+            for(int j = 1; j <= s2.length(); j++){
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+                    curr[j] = 1 + prev[j-1];
+                }
+                else{
+                    curr[j] = Math.max(prev[j], curr[j-1]);
+                }
+            }
+            prev = curr;
+        }
+        return prev[s2.length()];
+
+//        Tabulation
+//        for(int j = 0; j <= s2.length(); j++){
+//            dp[0][j] = 0;
+//        }
+//        for(int i = 0; i <= s1.length(); i++){
+//            dp[i][0] = 0;
+//        }
+//        for(int i = 1; i <= s1.length(); i++){
+//            for(int j = 1; j <= s2.length(); j++){
+//                if(s1.charAt(i-1) == s2.charAt(j-1)){
+//                    dp[i][j] = 1 + dp[i-1][j-1];
+//                }
+//                else{
+//                    dp[i][j] = Math.max(dp[i-1][j], dp[i][j-1]);
+//                }
+//            }
+//        }
+//        return dp[s1.length()][s2.length()];
+
+//        Brute and Better
+//        if(ind1 == 0 || ind2 == 0){
+//            return 0;
+//        }
+//        if(dp[ind1][ind2]!=-1){
+//            return dp[ind1][ind2];
+//        }
+//        if(s1.charAt(ind1-1) == s2.charAt(ind2-1)){
+//            return 1 + longestCommonSubsequence(s1, s2, ind1- 1, ind2 - 1, dp);
+//        }
+//        return dp[ind1][ind2] = Math.max(longestCommonSubsequence(s1, s2, ind1 - 1, ind2, dp),
+//                longestCommonSubsequence(s1, s2, ind1, ind2 - 1, dp));
+    }
+
+    public static int rodCutting(int[] price, int[][] dp, int ind, int n){
+
+//        Tabulation
+        for(int i = 0; i <= n; i++){
+            dp[0][i] = i * price[0];
+        }
+        for(int i = 1; i < price.length; i++){
+            for(int j = 0; j <= n; j++){
+                int notTake = dp[i-1][j];
+                int take = Integer.MIN_VALUE;
+                int rodLen = i+1;
+                if(rodLen <= j){
+                    take = price[i] + dp[i][j-rodLen];
+                }
+                dp[i][j] = Math.max(take, notTake);
+            }
+        }
+        return dp[price.length - 1][n];
+
+//        Brute and Better
+//        if(ind == 0){
+//            return n * price[0];
+//        }
+//        if(dp[ind][n] != -1){
+//            return dp[ind][n];
+//        }
+//        int notTake = rodCutting(price, dp, ind-1, n);
+//        int take = Integer.MIN_VALUE;
+//        int rodLen = ind+1;
+//        if(rodLen <= n){
+//            take = price[ind] + rodCutting(price, dp, ind, n - rodLen);
+//        }
+//        return dp[ind][n] = Math.max(take, notTake);
+    }
+
+    public static int unboundedKnapsack(int[] weight, int[] value, int bagWeight, int ind, int[][] dp){
+
+//        Space Optimization
+        int[] prev = new int[bagWeight + 1];
+        for(int i = 0; i <= bagWeight; i++){
+            prev[i] = (i / weight[0]) * value[0];
+        }
+
+        for(int i = 1; i < weight.length; i++){
+//            int[] curr = new int[bagWeight + 1];
+            for(int j = 0; j <= bagWeight; j++){
+                int notTake = prev[j];
+                int take = Integer.MIN_VALUE;
+                if(weight[i] <= j){
+                    take = value[i] + prev[j - weight[i]];
+                }
+                prev[j] = Math.max(take, notTake);
+            }
+//            prev = curr;
+        }
+        return prev[bagWeight];
+
+//        Tabulation
+//        for(int i = 0; i <= bagWeight; i++){
+//            dp[0][i] = (i / weight[0]) * value[0];
+//        }
+//
+//        for(int i = 1; i < weight.length; i++){
+//            for(int j = 0; j <= bagWeight; j++){
+//                int notTake = dp[i-1][j];
+//                int take = Integer.MIN_VALUE;
+//                if(weight[i] <= j){
+//                    take = value[i] + dp[i][j - weight[i]];
+//                }
+//                dp[i][j] = Math.max(take, notTake);
+//            }
+//        }
+//        return dp[weight.length-1][bagWeight];
+
+//        Brute + Better
+//        if(ind == 0){
+//            return (bagWeight / weight[ind]) * value[0];
+//        }
+//        if(dp[ind][bagWeight] != -1){
+//            return dp[ind][bagWeight];
+//        }
+//        int notTake = unboundedKnapsack(weight, value, bagWeight, ind - 1, dp);
+//        int take = Integer.MIN_VALUE;
+//        if(weight[ind] <= bagWeight){
+//            take = value[ind] + unboundedKnapsack(weight, value, bagWeight - weight[ind], ind, dp);
+//        }
+//        return dp[ind][bagWeight] = Math.max(take, notTake);
     }
 
     public static int minimumCoinsProvidedAnyElementCanBeUsedAnyNumberOfTimes(int[] arr, int[][] dp, int ind, int target){
