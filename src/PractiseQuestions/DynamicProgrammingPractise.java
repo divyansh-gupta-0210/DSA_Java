@@ -211,13 +211,448 @@ public class DynamicProgrammingPractise {
 //        String str2 = "anc";
 //        print(minimumNumberOfInsertionsAndDeletionNeededToConvertS1toS2(str1, str2));
 
-        String s1 = "brute";
-        String s2 = "groot";
-        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
-        for(int i = 0; i < s1.length(); i++){
+//        String s1 = "brute";
+//        String s2 = "groot";
+//        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i < s1.length(); i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(shortestCommonSuperSequence(s1, s2, dp));
+
+//        String s1 = "rabbbit"; String s2 = "rabbit";
+//        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i <= s1.length(); i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(distinctSubsequences(s1, s2, s1.length(), s2.length(), dp));
+
+//        String s1 = "horse"; String s2 = "ros";
+//        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i <= s1.length(); i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(editDistance(s1, s2, s1.length() , s2.length() , dp));
+
+
+//        String s1 = "?ay"; // ab*cd
+//        String s2 = "ray"; // abdefcd
+//        int[][] dp = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i <= s1.length(); i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(wildCardMatching(s1, s2, s1.length() , s2.length() , dp));
+
+//        int[] arr = {3,3,5,0,0,3,1,4};
+//        print(buyAndSellStockI(arr));
+//        int buy = 1;
+//        int[][] dp = new int[arr.length][2];
+//        for(int i = 0; i < arr.length; i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(buyAndSellStockII(arr, 0, buy, dp));
+
+//        int[] arr = {3,3,5,0,0,3,1,4};
+//        int buy = 1;
+//
+//        int[][][] dp = new int[arr.length][2][3]; // arr.length * (buy [1] / sell [0]) * ( cap = 2 (0/1/2))
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = 0; j <= 1; j++){
+//                Arrays.fill(dp[i][j], -1);
+//            }
+//        }
+//        print(buyAndSellStockIII(arr, 0, buy, dp, 2));
+
+//        int[] arr = {8,5,1,3,10};
+//        int k = 2; // at most k transactions
+//
+//        int[][] dp = new int[arr.length][2*k]; // arr.length * (buy [1] / sell [0]) * ( cap = 2 (0/1/2))
+//        for(int i = 0; i < arr.length; i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+
+//        int[] arr = {1,2,3,0,2};
+//        int buy = 1;
+//        int[][] dp = new int[arr.length][2]; // arr.length * (buy [1] / sell [0])
+//        for(int i = 0; i < arr.length; i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        print(buyAndSellStockBuyAfterACoolDown(arr, 0, buy, dp));
+
+        int[] arr = {1,2,3,0,2};
+        int buy = 1;
+        int[][] dp = new int[arr.length][2]; // arr.length * (buy [1] / sell [0])
+        for(int i = 0; i < arr.length; i++){
             Arrays.fill(dp[i], -1);
         }
-        print(shortestCommonSuperSequence(s1, s2, dp));
+        int fee = 1;
+        print(buyAndSellStockBuyWithATransactionFee(arr, 0, buy, dp, fee));
+    }
+
+    public static int buyAndSellStockBuyWithATransactionFee(int[] arr, int ind, int buy, int[][] dp, int fee){
+        if(ind == arr.length){
+            return 0;
+        }
+        if(dp[ind][buy]!=-1){
+            return dp[ind][buy];
+        }
+        if(buy == 1){
+            return dp[ind][buy] = Math.max(-arr[ind] + buyAndSellStockBuyWithATransactionFee(arr, ind + 1, 0, dp, fee),
+                    buyAndSellStockBuyWithATransactionFee(arr, ind+1, 1, dp, fee));
+        }
+        else{
+            return dp[ind][buy] = Math.max(arr[ind] + buyAndSellStockBuyWithATransactionFee(arr, ind + 1, 1, dp, fee) - fee,
+                    buyAndSellStockBuyWithATransactionFee(arr, ind+1, 0, dp, fee));
+        }
+    }
+
+    public static int buyAndSellStockBuyAfterACoolDown(int[] arr, int ind, int buy, int[][] dp){
+
+//        Tabulation
+        int[][] dpTabulation = new int[arr.length + 2][2];
+        for(int i = arr.length - 1; i >= 0; i--){
+            for(int j = 0; j <= 1; j++){
+                if(j==1){
+                    dpTabulation[i][j] = Math.max(-arr[i] + dpTabulation[i+1][0], dpTabulation[i+1][1]);
+                }
+                else{
+                    dpTabulation[i][j] = Math.max(arr[i] + dpTabulation[i+2][1], dpTabulation[i+1][0]);
+                }
+            }
+        }
+        return dpTabulation[0][1];
+
+//        Brute and Better
+//        if (ind >= arr.length) {
+//            return 0;
+//        }
+//        if(dp[ind][buy] != -1){
+//            return dp[ind][buy];
+//        }
+//        if(buy == 1){
+//            return dp[ind][buy] = Math.max( -arr[ind] + buyAndSellStockBuyAfterACoolDown(arr, ind+1, 0, dp),
+//                    buyAndSellStockBuyAfterACoolDown(arr, ind + 1, 1, dp));
+//        }
+//        else{
+//            return dp[ind][buy] = Math.max( arr[ind] + buyAndSellStockBuyAfterACoolDown(arr, ind+2, 1, dp),
+//                    buyAndSellStockBuyAfterACoolDown(arr, ind + 1, 0, dp));
+//        }
+    }
+
+    public static int buyAndSellStockIV(int[] arr, int transactionNo, int ind, int[][] dp, int maxT) {
+
+//       Tabulation
+        int[][] dpTabulation = new int[arr.length+1][2*maxT+1];
+        for(int i = arr.length - 1; i >= 0; i--){
+            for(int tranNo = 2*maxT - 1; tranNo >= 0; tranNo--){
+                if(tranNo%2==0){
+                    dpTabulation[i][tranNo] = Math.max(-arr[i] + dpTabulation[i+1][tranNo+1], dpTabulation[i+1][tranNo]);
+                }
+                else{
+                    dpTabulation[i][tranNo] = Math.max(arr[i] + dpTabulation[i+1][tranNo+1], dpTabulation[i+1][tranNo]);
+                }
+            }
+        }
+        return dpTabulation[0][0];
+
+//        Brute and Better
+//        if(ind == arr.length || transactionNo == maxT){
+//            return 0;
+//        }
+//        if(dp[ind][transactionNo]!=-1){
+//            return dp[ind][transactionNo];
+//        }
+//        if(transactionNo % 2 == 0){
+//            return dp[ind][transactionNo] = Math.max( -arr[ind] + buyAndSellStockIV(arr, transactionNo + 1,ind+1, dp, maxT),
+//                    buyAndSellStockIV(arr, transactionNo, ind + 1, dp, maxT));
+//        }
+//        else{
+//            return dp[ind][transactionNo] = Math.max( arr[ind] + buyAndSellStockIV(arr, transactionNo + 1,ind+1, dp, maxT),
+//                    buyAndSellStockIV(arr, transactionNo, ind + 1, dp, maxT));
+//        }
+    }
+
+    public static int buyAndSellStockIII(int[] arr, int ind, int buy, int[][][] dp, int cap){
+
+//        Space Optimization
+        int[][] after = new int[2][3];
+        for(int i = 0; i < arr.length; i++){
+            for(int j = 0; j <= 1; j++){
+                after[j][0] = 0;
+            }
+        }
+
+        for(int i = 0; i <= 1; i++){
+            for(int j = 0; j <= 2; j++){
+                after[i][j] = 0;
+            }
+        }
+
+        for(int i = arr.length - 1; i >= 0; i--){
+            int[][] curr = new int[2][3];
+            for(int j = 0; j <= 1; j++){
+                for(int k = 1; k <= 2; k++){
+                    if(j == 1){
+                        curr[j][k] = Math.max(-arr[i] + after[0][k], after[1][k]);
+                    }
+                    else{
+                        curr[j][k] = Math.max( arr[i] +  after[1][k-1], after[0][k]);
+                    }
+                }
+            }
+            after = curr;
+        }
+
+        return after[1][2];
+
+//        Tabulation
+//        int[][][] dpTabulation = new int[arr.length + 1][2][3];
+//        for(int i = 0; i < arr.length; i++){
+//            for(int j = 0; j <= 1; j++){
+//                dpTabulation[i][j][0] = 0;
+//            }
+//        }
+//
+//        for(int i = 0; i <= 1; i++){
+//            for(int j = 0; j <= 2; j++){
+//                dpTabulation[arr.length][i][j] = 0;
+//            }
+//        }
+//
+//        for(int i = arr.length - 1; i >= 0; i--){
+//            for(int j = 0; j <= 1; j++){
+//                for(int k = 1; k <= 2; k++){
+//                    if(j == 1){
+//                        dpTabulation[i][j][k] = Math.max(-arr[i] + dpTabulation[i+1][0][k], dpTabulation[i + 1][1][k]);
+//                    }
+//                    else{
+//                        dpTabulation[i][j][k] = Math.max( arr[i] +  dpTabulation[i+1][1][k-1], dpTabulation[i+1][0][k]);
+//                    }
+//                }
+//            }
+//        }
+//
+//        return dpTabulation[0][1][2];
+
+//        Better and Brute
+//        if(ind == arr.length || cap == 0){
+//            return 0;
+//        }
+//        if(dp[ind][buy][cap] != -1){
+//            return dp[ind][buy][cap];
+//        }
+//
+//        if(buy == 1){
+//            return dp[ind][buy][cap] = Math.max( -arr[ind] + buyAndSellStockIII(arr, ind+1, 0, dp, cap),
+//                    buyAndSellStockIII(arr, ind + 1, 1, dp, cap));
+//        }
+//        else{
+//            return dp[ind][buy][cap] = Math.max( arr[ind] + buyAndSellStockIII(arr, ind+1, 1, dp, cap - 1),
+//                    buyAndSellStockIII(arr, ind + 1, 0, dp, cap));
+//        }
+    }
+
+    public static int buyAndSellStockII(int[] arr, int ind, int buy, int[][] dp){
+
+//        Space Optimization
+        int[] ahead = new int[2];
+        ahead[0] = 0; ahead[1] = 0;
+
+        for(int i = arr.length-1; i>=0; i--){
+            int[] curr = new int[2];
+            for(int j = 0; j<= 1; j++){
+                int profit = 0;
+                if(j == 1){
+                    profit = Math.max((-arr[i] + ahead[0]), ahead[1]);
+                }
+                else{
+                    profit = Math.max((arr[i] + ahead[1]), ahead[0]);
+                }
+                curr[j] = profit;
+            }
+            ahead = curr;
+        }
+        return ahead[1];
+
+//        Tabulation
+//        int[][] dpTabulation = new int[arr.length + 1][2];
+//        dpTabulation[arr.length][0] = 0; dpTabulation[arr.length][1] = 0;
+//
+//        for(int i = arr.length-1; i>=0; i--){
+//            for(int j = 0; j<= 1; j++){
+//                int profit = 0;
+//                if(j == 1){
+//                    profit = Math.max((-arr[i] + dpTabulation[i+1][0]), dpTabulation[i+1][1]);
+//                }
+//                else{
+//                    profit = Math.max((arr[i] + dpTabulation[i+1][1]), dpTabulation[i+1][0]);
+//                }
+//                dpTabulation[i][j] = profit;
+//            }
+//        }
+//        return dpTabulation[0][1];
+
+//        Brute and Better
+//        if(ind == arr.length){
+//            return 0;
+//        }
+//        if(dp[ind][buy] != -1){
+//            return dp[ind][buy];
+//        }
+//        if(buy == 1){
+//            return dp[ind][buy] = Math.max( -arr[ind] + buyAndSellStockII(arr, ind+1, 0, dp),
+//                    buyAndSellStockII(arr, ind + 1, 1, dp));
+//        }
+//        else{
+//            return dp[ind][buy] = Math.max( arr[ind] + buyAndSellStockII(arr, ind+1, 1, dp),
+//                    buyAndSellStockII(arr, ind + 1, 0, dp));
+//        }
+    }
+
+    public static int buyAndSellStockI(int[] arr){
+        int mini = arr[0];
+        int profit = 0;
+        for(int i = 1; i < arr.length; i++){
+            int cost = arr[i] - mini;
+            profit = Math.max(cost, profit);
+            mini = Math.min(mini, arr[i]);
+        }
+        return profit;
+    }
+
+    /* TO BE DONE*/
+//    public static int wildCardMatching(String s1, String s2, int ind1, int ind2, int[][] dp){
+//
+//    }
+
+    public static int editDistance(String s1, String s2, int ind1, int ind2, int[][] dp){
+
+//        Space optimization
+        int[] prev = new int[s2.length() + 1];
+        for(int i = 0; i <= s2.length(); i++){
+            prev[i] = i;
+        }
+
+        for(int i = 1; i <= s1.length(); i++){
+            int[] curr = new int[s2.length() + 1];
+            for(int j = 1; j <= s2.length(); j++){
+                curr[0] = i;
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+                    curr[j] = prev[j-1];
+                }
+                else{
+                    int insert = curr[j-1];
+                    int delete = prev[j];
+                    int replace = prev[j-1];
+                    curr[j] = 1 + Math.min(insert, Math.min(delete, replace));
+                }
+            }
+            prev = curr;
+        }
+        return prev[s2.length()];
+
+//        Tabulation
+//        int[][] dpTabulation = new int[s1.length() + 1][s2.length() + 1];
+//        for(int i = 0; i <= s2.length(); i++){
+//            dpTabulation[0][i] = i;
+//        }
+//        for(int i = 0; i <= s1.length(); i++){
+//            dpTabulation[i][0] = i;
+//        }
+//
+//        for(int i = 1; i <= s1.length(); i++){
+//            for(int j = 1; j <= s2.length(); j++){
+//                if(s1.charAt(i-1) == s2.charAt(j-1)){
+//                    dpTabulation[i][j] = dpTabulation[i-1][j-1];
+//                }
+//                else{
+//                    int insert = dpTabulation[i][j-1];
+//                    int delete = dpTabulation[i-1][j];
+//                    int replace = dpTabulation[i-1][j-1];
+//                    dpTabulation[i][j] = 1 + Math.min(insert, Math.min(delete, replace));
+//                }
+//            }
+//        }
+//        return dpTabulation[s1.length()][s2.length()];
+//        Brute and Better
+//        if(ind1 == 0){
+//            return ind2 ;
+//        }
+//        if(ind2 == 0){
+//            return ind1 ;
+//        }
+//        if(dp[ind1][ind2] != -1){
+//            return dp[ind1][ind2];
+//        }
+//        if(s1.charAt(ind1 - 1) == s2.charAt(ind2 - 1)){
+//            return dp[ind1][ind2] = editDistance(s1, s2, ind1 - 1, ind2 - 1, dp);
+//        }
+//        else{
+//            int insert = editDistance(s1, s2, ind1, ind2 - 1, dp);
+//            int delete = editDistance(s1, s2, ind1 - 1, ind2, dp);
+//            int replace = editDistance(s1, s2, ind1 - 1, ind2 - 1, dp);
+//            return dp[ind1][ind2] = 1 + Math.min(insert, Math.min(delete, replace));
+//        }
+    }
+
+    public static int distinctSubsequences(String s1, String s2, int ind1, int ind2, int[][] dp){
+
+//        Space Optimization
+        int[] prev = new int[s2.length()+1];
+        prev[0] = 1;
+        for(int i = 1; i <= s1.length(); i++){
+//            int[] curr = new int[s2.length() + 1];
+//            for(int j = 1; j <= s2.length(); j++){
+            for(int j = s2.length(); j >= 1; j--){
+                if(s1.charAt(i-1) == s2.charAt(j-1)){
+//                    curr[j] = prev[j-1] + prev[j];
+                    prev[j] = prev[j-1] + prev[j];
+                }
+//                else{
+//                    curr[j] = prev[j];
+//                    prev[j] = prev[j];
+//                }
+            }
+//            prev = curr;
+        }
+        return prev[s2.length()];
+
+//        Tabulation
+//        int[][] dpTabulation = new int[s1.length()+1][s2.length()+1];
+//        for(int i = 0; i <= s1.length(); i++){
+//            dpTabulation[i][0] = 1;
+//        }
+//        for(int j = 1; j <= s2.length(); j++){
+//            dpTabulation[0][j] = 0;
+//        }
+//
+//        for(int i = 1; i <= s1.length(); i++){
+//            for(int j = 1; j <= s2.length(); j++){
+//                if(s1.charAt(i-1) == s2.charAt(j-1)){
+//                    dpTabulation[i][j] = dpTabulation[i-1][j-1] + dpTabulation[i-1][j];
+//                }
+//                else{
+//                    dpTabulation[i][j] = dpTabulation[i-1][j];
+//                }
+//            }
+//        }
+//        return dpTabulation[s1.length()][s2.length()];
+
+//        Brute and Better
+//        if(ind2 == 0){
+//            return 1;
+//        }
+//        if(ind1 == 0){
+//            return 0;
+//        }
+//        if(dp[ind1][ind2]!=-1){
+//            return dp[ind1][ind2];
+//        }
+//        if(s1.charAt(ind1-1) == s2.charAt(ind2-1)){
+//            return dp[ind1][ind2] = distinctSubsequences(s1, s2, ind1 - 1, ind2- 1, dp) + distinctSubsequences(s1, s2, ind1 - 1, ind2, dp);
+//        }
+//        else{
+//            return dp[ind1][ind2] = distinctSubsequences(s1, s2, ind1-1, ind2, dp);
+//        }
     }
 
     public static String shortestCommonSuperSequence(String s1, String s2, int[][] dp){
@@ -375,7 +810,7 @@ public class DynamicProgrammingPractise {
         return ans.toString();
     }
 
-        public static int longestCommonSubsequence(String s1, String s2, int ind1, int ind2, int[][] dp){
+    public static int longestCommonSubsequence(String s1, String s2, int ind1, int ind2, int[][] dp){
 
 //      Space Optimization
         int[] prev = new int[s1.length() + 1];
