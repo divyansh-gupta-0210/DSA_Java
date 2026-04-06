@@ -1,7 +1,11 @@
 package PractiseQuestions;
 
+import com.sun.jdi.ArrayReference;
+
 import javax.naming.InsufficientResourcesException;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 
 public class DynamicProgrammingPractise {
 
@@ -278,14 +282,223 @@ public class DynamicProgrammingPractise {
 //        }
 //        print(buyAndSellStockBuyAfterACoolDown(arr, 0, buy, dp));
 
-        int[] arr = {1,2,3,0,2};
-        int buy = 1;
-        int[][] dp = new int[arr.length][2]; // arr.length * (buy [1] / sell [0])
-        for(int i = 0; i < arr.length; i++){
-            Arrays.fill(dp[i], -1);
+//        int[] arr = {1,2,3,0,2};
+//        int buy = 1;
+//        int[][] dp = new int[arr.length][2]; // arr.length * (buy [1] / sell [0])
+//        for(int i = 0; i < arr.length; i++){
+//            Arrays.fill(dp[i], -1);
+//        }
+//        int fee = 1;
+//        print(buyAndSellStockBuyWithATransactionFee(arr, 0, buy, dp, fee));
+
+//        int[] arr = {10,9,2,5,3,7,1,101,18};
+//        int prev_index = -1;
+//        int[][] dp = new int[arr.length][arr.length+1];
+//        for (int[] row : dp) {
+//            Arrays.fill(row, -1);
+//        }
+//        print(longestIncreasingSubsequence(arr, 0,  prev_index, dp));
+
+//        int[] arr = {1,16,7,8,4};
+//        print(longestDivisibleSubset(arr));
+
+//        String[] words = {"a", "b", "ba", "bca", "bda", "bdca"};
+//        print(longestStringChain(words));
+
+//        int[] arr = {1,11,2,10,4,5,2,1};
+//        print(longestBitonicSubsequence(arr));
+
+        int[] arr = {1,3,5,4,7};
+        print(numberOfLongestIncreasingSubsequence(arr));
+
+    }
+
+    public static int numberOfLongestIncreasingSubsequence(int[] arr){
+        int[] dp = new int[arr.length];
+        int[] cnt = new int[arr.length];
+        Arrays.fill(dp, 1);
+        Arrays.fill(cnt, 1);
+        int maxi = 0;
+        for(int i = 0; i < arr.length; i++) {
+            for (int prev = 0; prev < i; prev++) {
+                if (arr[prev] < arr[i] && 1 + dp[prev] > dp[i]) {
+                    dp[i] = 1 + dp[prev];
+                    cnt[i] = cnt[prev];
+                }
+                else if(arr[prev] < arr[i] && 1 + dp[prev] == dp[i]) {
+                    cnt[i] += cnt[prev];
+                }
+            }
+            maxi = Math.max(maxi, dp[i]);
         }
-        int fee = 1;
-        print(buyAndSellStockBuyWithATransactionFee(arr, 0, buy, dp, fee));
+        int nos = 0;
+        for(int i = 0; i < arr.length; i++){
+            if(dp[i] == maxi){
+                nos += cnt[i];
+            }
+        }
+        return nos;
+    }
+
+    public static int longestBitonicSubsequence(int[] arr){
+        int[] dp1 = new int[arr.length];
+        int[] dp2 = new int[arr.length];
+        Arrays.fill(dp1, 1);
+        Arrays.fill(dp2, 1);
+        for(int i = 0; i < arr.length; i++) {
+            for (int prev = 0; prev < i; prev++) {
+                if (arr[prev] < arr[i] && 1 + dp1[prev] > dp1[i]) {
+                    dp1[i] = 1 + dp1[prev];
+
+                }
+            }
+        }
+
+        for(int i = arr.length - 1; i >= 0; i--) {
+            for (int prev = arr.length - 1; prev > i; prev--) {
+                if (arr[prev] < arr[i] && 1 + dp2[prev] > dp2[i]) {
+                    dp2[i] = 1 + dp2[prev];
+
+                }
+            }
+        }
+        int maxi = 0;
+        for(int i = 0; i <arr.length; i++){
+            maxi = Math.max(maxi, dp1[i] + dp2[i] - 1);
+        }
+
+        return maxi;
+    }
+
+    public static int longestStringChain(String[] arr){
+        int[] dp = new int[arr.length];
+        int maxi = 0;
+        Arrays.fill(dp, 1);
+        Arrays.sort(arr, (a, b) -> a.length() - b.length());
+        for(int i = 0; i < arr.length; i++) {
+
+            for (int prev = 0; prev < i; prev++) {
+                if (checkPossible(arr[i], arr[prev]) && 1 + dp[prev] > dp[i]) {
+                    dp[i] = 1 + dp[prev];
+
+                }
+            }
+            if (dp[i] > maxi) {
+                maxi = dp[i];
+            }
+        }
+        return maxi;
+    }
+
+    public static boolean checkPossible(String s1, String s2){
+        if(s1.length() != s2.length() +1){
+            return false;
+        }
+        int f = 0;
+        int s = 0;
+        while(f < s1.length()){
+            if(s < s2.length() && s1.charAt(f) == s2.charAt(s)){
+                f++;
+                s++;
+            }
+            else{
+                f++;
+            }
+        }
+        if(f == s1.length() && s == s2.length()){
+            return true;
+        }
+        return false;
+    }
+
+    public static int longestDivisibleSubset(int[] arr){
+        Arrays.sort(arr);
+        int[] dp = new int[arr.length];
+        int maxi = 0;
+        Arrays.fill(dp, 1);
+        int[] hash = new int[arr.length];
+        int lastIndex = 0;
+        for(int i = 0; i < arr.length; i++) {
+            hash[i] = i;
+            for (int prev = 0; prev < i; prev++) {
+                if (arr[i] % arr[prev] == 0 && 1 + dp[prev] > dp[i]) {
+                    dp[i] = 1 + dp[prev];
+                    hash[i] = prev;
+                }
+            }
+            if (dp[i] > maxi) {
+                maxi = dp[i];
+                lastIndex = i;
+            }
+        }
+        ArrayList<Integer> temp = new ArrayList<>();
+        temp.add(arr[lastIndex]);
+        while(hash[lastIndex] != lastIndex){
+            lastIndex = hash[lastIndex];
+            temp.add(arr[lastIndex]);
+        }
+        print(temp);
+        return maxi;
+    }
+
+    public static int longestIncreasingSubsequence(int[] arr, int ind, int prev_index, int[][] dp){
+
+//        Binary Search
+        ArrayList<Integer> temp = new ArrayList<>();
+        for(int num : arr){
+            int pos = Collections.binarySearch(temp, num);
+            if(pos < 0){
+                pos = -(pos+1);
+            }
+            if(pos == temp.size()){
+                temp.add(num);
+            }
+            else{
+                temp.set(pos, num);
+            }
+        }
+        return temp.size();
+
+//        Space Optimization
+//        int[] ahead = new int[arr.length+1];
+//        for(int i = arr.length - 1; i >= 0; i--){
+//            int[] curr = new int[arr.length + 1];
+//            for(int j = i - 1; j >= -1; j--){
+//                int len = ahead[j+1];
+//                if(j == -1 || arr[i] > arr[j]){
+//                    len = Math.max(len, 1 + ahead[i+1]);
+//                }
+//                curr[j+1] = len;
+//            }
+//            ahead = curr;
+//        }
+//        return ahead[-1+1];
+
+//        Tabulation
+//        int[][] dpTabulation = new int[arr.length+1][arr.length+1];
+//        for(int i = arr.length - 1; i >= 0; i--){
+//            for(int j = i - 1; j >= -1; j--){
+//                int len = dpTabulation[i+1][j+1];
+//                if(j == -1 || arr[i] > arr[j]){
+//                    len = Math.max(len, 1 + dpTabulation[i+1][i+1]);
+//                }
+//                dpTabulation[i][j+1] = len;
+//            }
+//        }
+//        return dpTabulation[0][-1+1];
+
+//        Brute and Better
+//        if(ind == arr.length){
+//            return 0;
+//        }
+//        if (dp[ind][prev_index + 1] != -1) {
+//            return dp[ind][prev_index + 1];
+//        }
+//        int len = longestIncreasingSubsequence(arr, ind + 1, prev_index, dp);
+//        if(prev_index == -1 || arr[ind] > arr[prev_index]){
+//            len = Math.max(len, 1 + longestIncreasingSubsequence(arr, ind + 1, ind, dp));
+//        }
+//        return dp[ind][prev_index+1] = len;
     }
 
     public static int buyAndSellStockBuyWithATransactionFee(int[] arr, int ind, int buy, int[][] dp, int fee){
