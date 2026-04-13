@@ -19,6 +19,12 @@ public class Question extends Post{
         this.answerList.add(answer);
     }
 
+
+    public void notifyQuestionAuthor(String questionAuthor, Answer answer){
+        System.out.println("Notifying : " + questionAuthor);
+        System.out.println("Answer has been added by : " + answer.getAuthor().getName() + "\nAnswer " + answer.getBody());
+    }
+
     public synchronized void acceptAnswer(Answer answer) {
         if (!this.author.getId().equals(answer.getAuthor().getId()) && this.acceptedAnswer == null) {
             this.acceptedAnswer = answer;

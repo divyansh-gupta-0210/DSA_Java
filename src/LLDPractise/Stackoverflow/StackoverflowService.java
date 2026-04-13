@@ -35,6 +35,7 @@ public class StackoverflowService {
         answer.addObserver(reputationManager);
         question.addAnswer(answer);
         answers.put(answer.getId(), answer);
+        question.notifyQuestionAuthor(question.getAuthor().getName() ,answer);
         return answer;
     }
 
