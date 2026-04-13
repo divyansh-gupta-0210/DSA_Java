@@ -1,0 +1,29 @@
+[2026-04-12T20:15:41.175793] [INFO] Logging to multiple outputs
+[2026-04-12T20:17:42.424915700] [INFO] Logging to multiple outputs
+[2026-04-12T20:22:58.866629400] [INFO] Logging to multiple outputs
+[2026-04-12T20:31:40.798277400] [INFO] Logging to multiple outputs
+[2026-04-12T20:31:54.799842300] [INFO] Logging to multiple outputs
+[2026-04-12T21:24:58.963824900] [INFO] Logging to multiple outputs
+[2026-04-12T21:24:58.969825700] [INFO] Application started
+[2026-04-12T21:24:58.972825400] [DEBUG] Debugging details
+[2026-04-12T21:24:58.973824800] [WARNING] Warning message
+[2026-04-12T21:24:58.973824800] [FATAL] Fatal error!
+[2026-04-12T21:24:58.973824800] [ERROR] Error occurred
+[2026-04-12T21:25:14.738709700] [INFO] Logging to multiple outputs
+[2026-04-12T21:25:14.745711100] [INFO] Application started
+[2026-04-12T21:25:14.749711700] [ERROR] Error occurred
+[2026-04-12T21:25:14.749711700] [WARNING] Warning message
+[2026-04-12T21:25:14.749711700] [DEBUG] Debugging details
+[2026-04-12T21:25:14.749711700] [FATAL] Fatal error!
+[2026-04-12T21:26:00.775751600] [INFO] Logging to multiple outputs
+[2026-04-12T21:26:00.781752900] [INFO] Application started
+[2026-04-12T21:26:00.785755500] [WARNING] Warning message
+[2026-04-12T21:26:00.784753] [DEBUG] Debugging details
+[2026-04-12T21:26:00.785755500] [FATAL] Fatal error!
+[2026-04-12T21:26:00.785755500] [ERROR] Error occurred
+[2026-04-12T21:26:13.563239800] [INFO] Logging to multiple outputs
+[2026-04-12T21:26:13.570246200] [INFO] Application started
+[2026-04-12T21:26:13.573239800] [DEBUG] Debugging details
+[2026-04-12T21:26:13.574247300] [WARNING] Warning message
+[2026-04-12T21:26:13.575240400] [ERROR] Error occurred
+[2026-04-12T21:26:13.575240400] [FATAL] Fatal error!
