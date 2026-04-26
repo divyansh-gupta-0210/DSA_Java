@@ -15,8 +15,8 @@ public class TrafficSignalMain {
 
         Road road1 = new Road("Road-A", signal1);
         Road road2 = new Road("Road-B", signal2);
-        Road road3 = new Road("Road-C", signal1);
-        Road road4 = new Road("Road-D", signal2);
+        Road road3 = new Road("Road-C", signal3);
+        Road road4 = new Road("Road-D", signal4);
 
         Intersection intersection = new Intersection();
         intersection.addRoad(road1);
@@ -27,16 +27,16 @@ public class TrafficSignalMain {
         TrafficController controller = TrafficController.getInstance();
         controller.setIntersection(intersection);
 
-//        EmergencyHandler emergencyHandler = new EmergencyHandler();
-//        new Thread(() -> {
-//            try{
-//                Thread.sleep(15000);
-//                emergencyHandler.detectEmergency("Road-A");
-//            }
-//            catch (InterruptedException ex){
-//                ex.printStackTrace();
-//            }
-//        }).start();
+        EmergencyHandler emergencyHandler = new EmergencyHandler();
+        new Thread(() -> {
+            try{
+                Thread.sleep(15000);
+                emergencyHandler.detectEmergency("Road-A");
+            }
+            catch (InterruptedException ex){
+                ex.printStackTrace();
+            }
+        }).start();
 
         controller.startTrafficControl();
     }

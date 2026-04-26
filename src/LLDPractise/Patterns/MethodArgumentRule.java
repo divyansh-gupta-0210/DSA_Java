@@ -1,4 +1,4 @@
-package LLDPractise;
+package LLDPractise.Patterns;
 
 class Parent{
     public void print(String msg){

@@ -1,10 +1,7 @@
 package LLDPractise.TrafficSignal;
 
-import LLDPractise.TrafficSignal.Intersection.Intersection;
-import LLDPractise.TrafficSignal.Intersection.Road;
-import LLDPractise.TrafficSignal.Signal.State.GreenState;
-import LLDPractise.TrafficSignal.Signal.State.RedState;
-import LLDPractise.TrafficSignal.Signal.State.YellowState;
+import LLDPractise.TrafficSignal.Intersection.*;
+import LLDPractise.TrafficSignal.Signal.State.*;
 import LLDPractise.TrafficSignal.Strartegy.EmergencyTimingStrategy;
 
 public class TrafficController {
@@ -82,6 +79,7 @@ public class TrafficController {
         for(Road road : intersection.getRoads()){
             if(road.getRoadId().equals(roadId)){
                 road.getTrafficSignal().setTimingStrategy(new EmergencyTimingStrategy());
+                road.getTrafficSignal().setCurrentState(new GreenState());
             }
         }
     }

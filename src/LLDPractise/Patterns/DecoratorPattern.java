@@ -1,4 +1,4 @@
-package LLDPractise;
+package LLDPractise.Patterns;
 
 interface Character{
     String getAbilities();

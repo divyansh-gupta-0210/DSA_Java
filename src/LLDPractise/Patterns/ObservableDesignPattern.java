@@ -1,4 +1,4 @@
-package LLDPractise;
+package LLDPractise.Patterns;
 
 import java.util.ArrayList;
 import java.util.List;
